@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-crema text-marron font-sans antialiased;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-amasa-500 text-white hover:bg-amasa-600 shadow-suave;
+  }
+  .btn-secondary {
+    @apply btn bg-amasa-100 text-amasa-900 hover:bg-amasa-200;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-amasa-900 hover:bg-amasa-100;
+  }
+  .card {
+    @apply bg-white/65 backdrop-blur-xl border border-white/60 rounded-3xl shadow-[0_8px_32px_rgba(58,42,26,0.08)] p-6;
+  }
+  .card-solid {
+    @apply bg-white rounded-3xl shadow-suave p-6;
+  }
+  .input {
+    @apply w-full rounded-2xl border-2 border-amasa-100 bg-white px-4 py-3 text-marron focus:outline-none focus:border-amasa-400 transition-colors;
+  }
+  .input-glass {
+    @apply w-full rounded-2xl bg-white/60 backdrop-blur-xl border border-white/60 px-4 py-3 text-marron focus:outline-none focus:border-amasa-400 transition-colors;
+  }
+  .label {
+    @apply block text-sm font-semibold text-amasa-900 mb-1.5;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  /* Liquid glass — vidrio esmerilado para tarjetas y barras */
+  .glass {
+    @apply bg-white/55 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(58,42,26,0.08)];
+  }
+  .glass-strong {
+    @apply bg-white/75 backdrop-blur-2xl border border-white/70 shadow-[0_12px_40px_rgba(58,42,26,0.12)];
+  }
+  .glass-tint {
+    @apply bg-amasa-50/40 backdrop-blur-xl border border-white/50;
+  }
+  .glass-dark {
+    @apply bg-marron/30 backdrop-blur-xl border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.2)];
+  }
+}
+
+/* Blobs de color para que el blur tenga algo qué desenfocar */
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(40px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white !important; }
+}

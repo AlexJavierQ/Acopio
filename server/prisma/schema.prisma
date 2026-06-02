@@ -1,0 +1,97 @@
+// Schema Prisma para Amasa
+// Para producción cambiar provider a "postgresql" y ajustar DATABASE_URL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite no soporta enums; usamos String validado en la API.
+// Rol: 'CLIENTE' | 'DUENO'
+// EstadoPedido: 'RECIBIDO' | 'EN_PRODUCCION' | 'LISTO' | 'ENTREGADO'
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  telefono  String   @unique
+  password  String
+  rol       String   @default("CLIENTE")
+  direccion String?
+  creadoEn  DateTime @default(now())
+
+  pedidos   Pedido[]
+}
+
+model Producto {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  precio      Float
+  imagenUrl   String
+  activo      Boolean  @default(true)
+  creadoEn    DateTime @default(now())
+
+  recetas     RecetaItem[]
+  pedidoItems PedidoItem[]
+}
+
+model Insumo {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  unidad      String   // kg, unidades, lt, g
+  stockActual Float    @default(0)
+  stockMinimo Float    @default(0)
+
+  recetas     RecetaItem[]
+}
+
+// Receta: relaciona producto con insumos y cantidad por unidad producida
+model RecetaItem {
+  id         Int      @id @default(autoincrement())
+  productoId Int
+  insumoId   Int
+  cantidad   Float    // cantidad de insumo por 1 unidad producida
+
+  producto   Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  insumo     Insumo   @relation(fields: [insumoId], references: [id], onDelete: Cascade)
+
+  @@unique([productoId, insumoId])
+}
+
+model Pedido {
+  id           Int          @id @default(autoincrement())
+  clienteId    Int
+  fecha        DateTime     @default(now())
+  horaEntrega  String       // formato HH:mm
+  estado       String       @default("RECIBIDO")
+  total        Float
+
+  cliente      Usuario      @relation(fields: [clienteId], references: [id])
+  items        PedidoItem[]
+  notaVenta    NotaVenta?
+}
+
+model PedidoItem {
+  id             Int      @id @default(autoincrement())
+  pedidoId       Int
+  productoId     Int
+  cantidad       Int
+  precioUnitario Float
+
+  pedido         Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  producto       Producto @relation(fields: [productoId], references: [id])
+}
+
+model NotaVenta {
+  id       Int      @id @default(autoincrement())
+  pedidoId Int      @unique
+  numero   String   @unique
+  fecha    DateTime @default(now())
+  total    Float
+
+  pedido   Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+}

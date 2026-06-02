@@ -1,0 +1,21 @@
+{
+  "name": "amasa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CRM para panaderías y pastelerías de Loja, Ecuador",
+  "scripts": {
+    "install:all": "npm install && npm install --prefix server && npm install --prefix client",
+    "db:generate": "npm run prisma:generate --prefix server",
+    "db:migrate": "npm run prisma:migrate --prefix server",
+    "db:seed": "npm run seed --prefix server",
+    "setup": "npm run install:all && npm run db:migrate && npm run db:seed",
+    "dev": "concurrently -k -n SERVER,CLIENT -c yellow,cyan \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "build": "npm run build --prefix server && npm run build --prefix client",
+    "start": "npm run start --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
