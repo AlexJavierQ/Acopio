@@ -1,8 +1,8 @@
 {
-  "name": "amasa",
+  "name": "acopio",
   "version": "1.0.0",
   "private": true,
-  "description": "CRM para panaderías y pastelerías de Loja, Ecuador",
+  "description": "Acopio · Plataforma B2B que conecta proveedores con sus clientes mayoristas (Loja, Ecuador)",
   "scripts": {
     "install:all": "npm install && npm install --prefix server && npm install --prefix client",
     "db:generate": "npm run prisma:generate --prefix server",

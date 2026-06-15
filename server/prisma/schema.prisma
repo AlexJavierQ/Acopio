@@ -1,33 +1,70 @@
-// Schema Prisma para Amasa
-// Para producción cambiar provider a "postgresql" y ajustar DATABASE_URL.
+// Schema Prisma para Acopio
+// Postgres en producción (Neon). Usar la misma URL para dev local.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// SQLite no soporta enums; usamos String validado en la API.
-// Rol: 'CLIENTE' | 'DUENO'
-// EstadoPedido: 'RECIBIDO' | 'EN_PRODUCCION' | 'LISTO' | 'ENTREGADO'
+// Usamos String validado en la API (más portable entre proveedores de BD).
+// Rol:                'CLIENTE' | 'PROVEEDOR'
+// EstadoAfiliacion:   'PENDIENTE' | 'APROBADA' | 'RECHAZADA'
+// EstadoPedido:       'RECIBIDO' | 'EN_PRODUCCION' | 'LISTO' | 'ENTREGADO' | 'CANCELADO'
+// EstadoNegociacion:  'SOLICITADA' | 'CONTRA_PROPUESTA' | 'ACEPTADA' | 'RECHAZADA'
+// TipoNegociacion:    'PORCENTAJE' | 'MONTO_FIJO' | 'BONO' (BONO = productos extra de regalo)
 
 model Usuario {
-  id        Int      @id @default(autoincrement())
-  nombre    String
-  telefono  String   @unique
-  password  String
-  rol       String   @default("CLIENTE")
-  direccion String?
-  creadoEn  DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  nombre        String
+  telefono      String   @unique
+  password      String
+  rol           String   @default("CLIENTE")
+  direccion     String?
+  // Si rol = PROVEEDOR, estos describen su negocio en el catálogo público:
+  nombreNegocio String?
+  descripcion   String?
+  fotoUrl       String?
+  creadoEn      DateTime @default(now())
 
-  pedidos   Pedido[]
+  // Relaciones cuando el usuario es PROVEEDOR
+  productos          Producto[]    @relation("ProveedorProductos")
+  insumos            Insumo[]      @relation("ProveedorInsumos")
+  pedidosRecibidos   Pedido[]      @relation("ProveedorPedidos")
+  afiliacionesComoProveedor Afiliacion[] @relation("ProveedorAfiliaciones")
+  mensajesEnviados   Mensaje[]     @relation("MensajeRemitente")
+  mensajesRecibidos  Mensaje[]     @relation("MensajeDestinatario")
+
+  // Relaciones cuando el usuario es CLIENTE
+  pedidosHechos      Pedido[]      @relation("ClientePedidos")
+  afiliacionesComoCliente Afiliacion[] @relation("ClienteAfiliaciones")
+}
+
+// Afiliación entre un cliente y un proveedor.
+// El cliente solicita o el proveedor lo registra manualmente.
+model Afiliacion {
+  id          Int      @id @default(autoincrement())
+  clienteId   Int
+  proveedorId Int
+  estado      String   @default("PENDIENTE") // PENDIENTE | APROBADA | RECHAZADA
+  origen      String   @default("SOLICITUD") // SOLICITUD (lo pidió el cliente) | MANUAL (lo agregó el proveedor)
+  mensaje     String?  // mensaje opcional del cliente al solicitar
+  creadoEn    DateTime @default(now())
+  resueltoEn  DateTime?
+
+  cliente     Usuario  @relation("ClienteAfiliaciones", fields: [clienteId], references: [id], onDelete: Cascade)
+  proveedor   Usuario  @relation("ProveedorAfiliaciones", fields: [proveedorId], references: [id], onDelete: Cascade)
+
+  @@unique([clienteId, proveedorId])
+  @@index([proveedorId, estado])
 }
 
 model Producto {
   id          Int      @id @default(autoincrement())
+  proveedorId Int
   nombre      String
   descripcion String
   precio      Float
@@ -35,18 +72,26 @@ model Producto {
   activo      Boolean  @default(true)
   creadoEn    DateTime @default(now())
 
+  proveedor   Usuario      @relation("ProveedorProductos", fields: [proveedorId], references: [id], onDelete: Cascade)
   recetas     RecetaItem[]
   pedidoItems PedidoItem[]
+  bonos       NegociacionBono[]
+
+  @@index([proveedorId, activo])
 }
 
 model Insumo {
   id          Int      @id @default(autoincrement())
+  proveedorId Int
   nombre      String
   unidad      String   // kg, unidades, lt, g
   stockActual Float    @default(0)
   stockMinimo Float    @default(0)
 
+  proveedor   Usuario      @relation("ProveedorInsumos", fields: [proveedorId], references: [id], onDelete: Cascade)
   recetas     RecetaItem[]
+
+  @@index([proveedorId])
 }
 
 // Receta: relaciona producto con insumos y cantidad por unidad producida
@@ -65,14 +110,22 @@ model RecetaItem {
 model Pedido {
   id           Int          @id @default(autoincrement())
   clienteId    Int
+  proveedorId  Int
   fecha        DateTime     @default(now())
   horaEntrega  String       // formato HH:mm
   estado       String       @default("RECIBIDO")
+  subtotal     Float        @default(0)
+  descuento    Float        @default(0) // monto $ que se descuenta del subtotal
   total        Float
 
-  cliente      Usuario      @relation(fields: [clienteId], references: [id])
+  cliente      Usuario      @relation("ClientePedidos", fields: [clienteId], references: [id])
+  proveedor    Usuario      @relation("ProveedorPedidos", fields: [proveedorId], references: [id])
   items        PedidoItem[]
   notaVenta    NotaVenta?
+  negociacion  Negociacion?
+
+  @@index([proveedorId, estado, fecha])
+  @@index([clienteId, fecha])
 }
 
 model PedidoItem {
@@ -81,9 +134,38 @@ model PedidoItem {
   productoId     Int
   cantidad       Int
   precioUnitario Float
+  esBono         Boolean  @default(false) // true si es un producto extra de regalo (no se cobra)
 
   pedido         Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
   producto       Producto @relation(fields: [productoId], references: [id])
+}
+
+// Negociación: el cliente solicita descuento/bono; el proveedor responde.
+model Negociacion {
+  id             Int      @id @default(autoincrement())
+  pedidoId       Int      @unique
+  estado         String   @default("SOLICITADA") // SOLICITADA | CONTRA_PROPUESTA | ACEPTADA | RECHAZADA
+  mensajeCliente String?  // razón del cliente al pedir el descuento
+  // Propuesta final del proveedor (al aceptar):
+  tipo           String?  // PORCENTAJE | MONTO_FIJO | BONO
+  valor          Float?   // para PORCENTAJE: 0-100. Para MONTO_FIJO: monto $
+  notaProveedor  String?
+  creadoEn       DateTime @default(now())
+  resueltoEn     DateTime?
+
+  pedido         Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  bonos          NegociacionBono[]
+}
+
+// Productos extra que el proveedor regala como parte de la negociación.
+model NegociacionBono {
+  id             Int      @id @default(autoincrement())
+  negociacionId  Int
+  productoId     Int
+  cantidad       Int
+
+  negociacion    Negociacion @relation(fields: [negociacionId], references: [id], onDelete: Cascade)
+  producto       Producto    @relation(fields: [productoId], references: [id])
 }
 
 model NotaVenta {
@@ -94,4 +176,20 @@ model NotaVenta {
   total    Float
 
   pedido   Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+}
+
+// Chat simple entre dos usuarios (cliente <-> proveedor). Polling, sin WebSocket.
+model Mensaje {
+  id             Int      @id @default(autoincrement())
+  remitenteId    Int
+  destinatarioId Int
+  contenido      String
+  leido          Boolean  @default(false)
+  creadoEn       DateTime @default(now())
+
+  remitente      Usuario  @relation("MensajeRemitente", fields: [remitenteId], references: [id], onDelete: Cascade)
+  destinatario   Usuario  @relation("MensajeDestinatario", fields: [destinatarioId], references: [id], onDelete: Cascade)
+
+  @@index([remitenteId, destinatarioId, creadoEn])
+  @@index([destinatarioId, leido])
 }
