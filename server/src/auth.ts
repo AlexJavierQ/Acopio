@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'amasa-dev-secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'acopio-dev-secret';
+
+export type Rol = 'CLIENTE' | 'PROVEEDOR';
 
 export interface AuthPayload {
   id: number;
-  rol: 'CLIENTE' | 'DUENO';
+  rol: Rol;
   nombre: string;
 }
 
@@ -30,9 +32,9 @@ export function requireAuth(req: AuthedRequest, res: Response, next: NextFunctio
   }
 }
 
-export function requireDueno(req: AuthedRequest, res: Response, next: NextFunction) {
-  if (req.user?.rol !== 'DUENO') {
-    return res.status(403).json({ error: 'Acceso solo para dueños' });
+export function requireProveedor(req: AuthedRequest, res: Response, next: NextFunction) {
+  if (req.user?.rol !== 'PROVEEDOR') {
+    return res.status(403).json({ error: 'Acceso solo para proveedores' });
   }
   next();
 }

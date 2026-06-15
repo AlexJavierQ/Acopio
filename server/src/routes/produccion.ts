@@ -1,21 +1,20 @@
 import { Router } from 'express';
 import { prisma } from '../prisma';
-import { requireAuth, requireDueno } from '../auth';
+import { requireAuth, requireProveedor, AuthedRequest } from '../auth';
 
 const router = Router();
 
-router.use(requireAuth, requireDueno);
+router.use(requireAuth, requireProveedor);
 
-// Reporte de producción del día: calcula 4 pasos
-router.get('/hoy', async (_req, res) => {
-  const inicio = new Date();
-  inicio.setHours(0, 0, 0, 0);
-  const fin = new Date();
-  fin.setHours(23, 59, 59, 999);
+// Reporte de producción del día: calcula 4 pasos (scoped al proveedor logueado)
+router.get('/hoy', async (req: AuthedRequest, res) => {
+  const inicio = new Date(); inicio.setHours(0, 0, 0, 0);
+  const fin = new Date(); fin.setHours(23, 59, 59, 999);
 
-  // Solo pedidos no entregados (aún por producir)
+  // Solo pedidos no entregados de este proveedor (aún por producir)
   const pedidos = await prisma.pedido.findMany({
     where: {
+      proveedorId: req.user!.id,
       fecha: { gte: inicio, lte: fin },
       estado: { in: ['RECIBIDO', 'EN_PRODUCCION'] },
     },

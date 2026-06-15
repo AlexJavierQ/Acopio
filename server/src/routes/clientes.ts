@@ -1,52 +1,76 @@
 import { Router } from 'express';
 import { prisma } from '../prisma';
-import { requireAuth, requireDueno } from '../auth';
+import { requireAuth, requireProveedor, AuthedRequest } from '../auth';
 
 const router = Router();
 
-router.use(requireAuth, requireDueno);
+router.use(requireAuth, requireProveedor);
 
-router.get('/', async (req, res) => {
+/**
+ * Lista los CLIENTES AFILIADOS (estado APROBADA) al proveedor logueado.
+ * Usa ?q= para filtrar por nombre o teléfono.
+ */
+router.get('/', async (req: AuthedRequest, res) => {
+  const proveedorId = req.user!.id;
   const q = String(req.query.q || '').trim();
-  const where: any = { rol: 'CLIENTE' };
-  if (q) {
-    where.OR = [
-      { nombre: { contains: q } },
-      { telefono: { contains: q } },
-    ];
-  }
-  const clientes = await prisma.usuario.findMany({
-    where,
-    select: {
-      id: true,
-      nombre: true,
-      telefono: true,
-      direccion: true,
-      _count: { select: { pedidos: true } },
+
+  const afiliaciones = await prisma.afiliacion.findMany({
+    where: {
+      proveedorId,
+      estado: 'APROBADA',
+      ...(q
+        ? { cliente: { OR: [{ nombre: { contains: q, mode: 'insensitive' } }, { telefono: { contains: q } }] } }
+        : {}),
     },
-    orderBy: { nombre: 'asc' },
+    include: {
+      cliente: { select: { id: true, nombre: true, telefono: true, direccion: true } },
+    },
+    orderBy: { cliente: { nombre: 'asc' } },
   });
-  res.json(clientes);
+
+  // Anotar conteo de pedidos del cliente con ESTE proveedor
+  const clienteIds = afiliaciones.map((a) => a.clienteId);
+  const conteos = await prisma.pedido.groupBy({
+    by: ['clienteId'],
+    where: { proveedorId, clienteId: { in: clienteIds } },
+    _count: { _all: true },
+  });
+  const conteoMap = new Map(conteos.map((c) => [c.clienteId, c._count._all]));
+
+  res.json(
+    afiliaciones.map((a) => ({
+      ...a.cliente,
+      afiliadoDesde: a.resueltoEn || a.creadoEn,
+      pedidosConmigo: conteoMap.get(a.clienteId) ?? 0,
+    })),
+  );
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req: AuthedRequest, res) => {
   const id = Number(req.params.id);
+  const proveedorId = req.user!.id;
+
+  // Verificar afiliación aprobada
+  const afi = await prisma.afiliacion.findUnique({
+    where: { clienteId_proveedorId: { clienteId: id, proveedorId } },
+  });
+  if (!afi || afi.estado !== 'APROBADA') {
+    return res.status(403).json({ error: 'Cliente no afiliado a tu negocio' });
+  }
+
   const cliente = await prisma.usuario.findUnique({
     where: { id },
-    select: {
-      id: true,
-      nombre: true,
-      telefono: true,
-      direccion: true,
-      rol: true,
-      pedidos: {
-        include: { items: { include: { producto: true } } },
-        orderBy: { fecha: 'desc' },
-      },
-    },
+    select: { id: true, nombre: true, telefono: true, direccion: true, rol: true },
   });
   if (!cliente) return res.status(404).json({ error: 'No encontrado' });
-  res.json(cliente);
+
+  const pedidos = await prisma.pedido.findMany({
+    where: { clienteId: id, proveedorId },
+    include: { items: { include: { producto: true } }, negociacion: true },
+    orderBy: { fecha: 'desc' },
+  });
+
+  res.json({ ...cliente, afiliadoDesde: afi.resueltoEn || afi.creadoEn, pedidos });
 });
 
 export default router;

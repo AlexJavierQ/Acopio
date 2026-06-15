@@ -1,19 +1,20 @@
 import { Router } from 'express';
 import { prisma } from '../prisma';
-import { requireAuth, requireDueno } from '../auth';
+import { requireAuth, requireProveedor, AuthedRequest } from '../auth';
 
 const router = Router();
 
-router.use(requireAuth, requireDueno);
+router.use(requireAuth, requireProveedor);
 
-// Generar/obtener nota de venta para un pedido
-router.post('/pedido/:pedidoId', async (req, res) => {
+// Generar/obtener nota de venta para un pedido (solo si el pedido es del proveedor)
+router.post('/pedido/:pedidoId', async (req: AuthedRequest, res) => {
   const pedidoId = Number(req.params.pedidoId);
   const pedido = await prisma.pedido.findUnique({
     where: { id: pedidoId },
     include: { items: { include: { producto: true } }, cliente: true, notaVenta: true },
   });
   if (!pedido) return res.status(404).json({ error: 'Pedido no encontrado' });
+  if (pedido.proveedorId !== req.user!.id) return res.status(403).json({ error: 'No es tu pedido' });
 
   if (pedido.notaVenta) {
     return res.json({ ...pedido.notaVenta, pedido });
@@ -28,16 +29,17 @@ router.post('/pedido/:pedidoId', async (req, res) => {
   res.json({ ...nota, pedido });
 });
 
-router.get('/pedido/:pedidoId', async (req, res) => {
+router.get('/pedido/:pedidoId', async (req: AuthedRequest, res) => {
   const pedidoId = Number(req.params.pedidoId);
-  const nota = await prisma.notaVenta.findUnique({
-    where: { pedidoId },
-  });
-  if (!nota) return res.status(404).json({ error: 'Sin nota generada' });
   const pedido = await prisma.pedido.findUnique({
     where: { id: pedidoId },
     include: { items: { include: { producto: true } }, cliente: true },
   });
+  if (!pedido) return res.status(404).json({ error: 'Pedido no encontrado' });
+  if (pedido.proveedorId !== req.user!.id) return res.status(403).json({ error: 'No es tu pedido' });
+
+  const nota = await prisma.notaVenta.findUnique({ where: { pedidoId } });
+  if (!nota) return res.status(404).json({ error: 'Sin nota generada' });
   res.json({ ...nota, pedido });
 });
 
