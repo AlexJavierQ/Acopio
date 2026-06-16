@@ -8,7 +8,7 @@ interface Cliente {
   nombre: string;
   telefono: string;
   direccion: string | null;
-  _count: { pedidos: number };
+  pedidosConmigo: number;
 }
 
 export default function Clientes() {
@@ -64,7 +64,7 @@ export default function Clientes() {
               </p>
             )}
             <p className="text-sm text-amasa-700 flex items-center gap-1">
-              <ShoppingBag size={14} /> {c._count.pedidos} pedidos
+              <ShoppingBag size={14} /> {c.pedidosConmigo ?? 0} pedidos
             </p>
           </Link>
         ))}
