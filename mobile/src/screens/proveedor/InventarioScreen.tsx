@@ -25,6 +25,7 @@ import {
 } from 'lucide-react-native';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
+import { FadeInView, Pulse } from '../../components/Motion';
 import { api } from '../../lib/api';
 import { colors, fonts, radii, spacing } from '../../theme';
 import type { InventarioStackParamList } from '../../navigation/types';
@@ -85,6 +86,7 @@ export default function InventarioScreen() {
         ListHeaderComponent={
           <View style={{ gap: spacing(3), marginBottom: spacing(1) }}>
             {/* Banner de requerimientos */}
+            <FadeInView>
             <Pressable onPress={() => navigation.navigate('Requerimientos')}>
               <Card
                 style={[
@@ -93,7 +95,9 @@ export default function InventarioScreen() {
                 ]}
               >
                 {req && !req.todoAlcanza ? (
-                  <AlertTriangle size={28} color={colors.warning} />
+                  <Pulse>
+                    <AlertTriangle size={28} color={colors.warning} />
+                  </Pulse>
                 ) : (
                   <CheckCircle2 size={28} color={colors.success} />
                 )}
@@ -111,6 +115,7 @@ export default function InventarioScreen() {
                 <ChevronRight size={20} color={colors.textMuted} />
               </Card>
             </Pressable>
+            </FadeInView>
 
             {/* Acceso a recetas */}
             <Pressable onPress={() => navigation.navigate('Recetas')}>

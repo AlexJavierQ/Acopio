@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Check, X, UserPlus, Users, Phone, MapPin, MessageCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { api } from '../../lib/api';
@@ -48,7 +48,7 @@ export default function Afiliados() {
   const pendientes = items.filter((i) => i.estado === 'PENDIENTE').length;
   const tabCls = (active: boolean) =>
     `flex-1 sm:flex-initial px-5 py-2.5 rounded-xl font-semibold transition ${
-      active ? 'bg-amasa-500 text-white shadow-lg' : 'bg-white/60 text-amasa-800 hover:bg-white'
+      active ? 'bg-amasa-500 text-white shadow-lg' : 'bg-white text-amasa-800 hover:bg-white'
     }`;
 
   return (
@@ -114,7 +114,7 @@ export default function Afiliados() {
                   <button
                     onClick={() => resolver(a.id, 'RECHAZADA')}
                     disabled={resolviendo === a.id}
-                    className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-white/70 hover:bg-white border border-red-300 text-red-700 font-semibold text-sm disabled:opacity-60"
+                    className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-white hover:bg-white border border-red-300 text-red-700 font-semibold text-sm disabled:opacity-60"
                   >
                     <X size={14} /> Rechazar
                   </button>
@@ -123,13 +123,13 @@ export default function Afiliados() {
                 <div className="flex gap-2">
                   <Link
                     to={`/admin/clientes/${a.cliente.id}`}
-                    className="flex-1 px-3 py-2 rounded-xl bg-white/70 hover:bg-white border border-amasa-200 text-amasa-800 text-sm font-semibold text-center"
+                    className="flex-1 px-3 py-2 rounded-xl bg-white hover:bg-white border border-amasa-200 text-amasa-800 text-sm font-semibold text-center"
                   >
                     Ver historial
                   </Link>
                   <Link
                     to={`/chat/${a.cliente.id}`}
-                    className="px-3 py-2 rounded-xl bg-white/70 hover:bg-white border border-amasa-200 text-amasa-800"
+                    className="px-3 py-2 rounded-xl bg-white hover:bg-white border border-amasa-200 text-amasa-800"
                     title="Chat"
                   >
                     <MessageCircle size={16} />
@@ -173,8 +173,8 @@ function ModalAgregar({ onClose, onCreado }: { onClose: () => void; onCreado: ()
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-marron/40 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-4">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-marron/40 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
         <header>
           <h3 className="text-xl font-bold text-amasa-900">Agregar cliente</h3>
           <p className="text-sm text-amasa-700">Si el teléfono no existe, le creamos cuenta con clave temporal.</p>

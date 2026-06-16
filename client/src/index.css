@@ -70,6 +70,78 @@
   display: none !important;
 }
 
+/* ===================================================================
+   Animaciones sutiles y constantes
+   =================================================================== */
+
+/* Fondo "aurora" muy tenue que deriva lentamente — sutil pero presente */
+@keyframes auroraDrift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(2.5%, 2%, 0) scale(1.08); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+.app-bg { position: relative; }
+.app-bg::before {
+  content: '';
+  position: fixed;
+  inset: -25%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 38% at 18% 22%, rgba(200, 137, 63, 0.10), transparent 60%),
+    radial-gradient(34% 34% at 82% 18%, rgba(227, 168, 87, 0.10), transparent 60%),
+    radial-gradient(44% 44% at 72% 82%, rgba(166, 110, 44, 0.08), transparent 60%);
+  filter: blur(24px);
+  animation: auroraDrift 26s ease-in-out infinite;
+}
+.app-bg > * { position: relative; z-index: 1; }
+
+/* Entrada suave de contenido */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.delay-1 { animation-delay: 0.06s; }
+.delay-2 { animation-delay: 0.12s; }
+.delay-3 { animation-delay: 0.18s; }
+.delay-4 { animation-delay: 0.24s; }
+
+/* Aparición tenue (para KPIs, banners) */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.animate-fade-in { animation: fadeIn 0.6s ease both; }
+
+/* Latido sutil para alertas/insignias */
+@keyframes pulseSoft {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+.animate-pulse-soft { animation: pulseSoft 2.4s ease-in-out infinite; }
+
+/* Brillo de carga (skeleton) */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, rgba(58,42,26,0.06) 25%, rgba(58,42,26,0.12) 37%, rgba(58,42,26,0.06) 63%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+/* Elevación al pasar el cursor — micro-interacción constante */
+.lift { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.lift:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(58, 42, 26, 0.08); }
+
+/* Respeta a quienes prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .app-bg::before,
+  .animate-fade-up,
+  .animate-fade-in,
+  .animate-pulse-soft,
+  .skeleton { animation: none !important; }
+}
+
 @media print {
   .no-print { display: none !important; }
   body { background: white !important; }

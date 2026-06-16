@@ -5,6 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CheckCircle2, AlertTriangle, ShoppingCart, Boxes, Factory, BookOpen } from 'lucide-react-native';
 import Card from '../../components/Card';
 import EmptyState from '../../components/EmptyState';
+import { FadeInView, Pulse } from '../../components/Motion';
 import { api } from '../../lib/api';
 import { colors, fonts, radii, spacing } from '../../theme';
 import type { InventarioStackParamList } from '../../navigation/types';
@@ -90,17 +91,25 @@ export default function RequerimientosScreen() {
       }
     >
       {/* Estado general */}
-      <Card style={[styles.banner, { backgroundColor: alcanza ? colors.successBg : colors.warningBg }]}>
-        {alcanza ? <CheckCircle2 size={40} color={colors.success} /> : <AlertTriangle size={40} color={colors.warning} />}
-        <Text style={[styles.bannerTitulo, { color: alcanza ? colors.success : colors.warning }]}>
-          {alcanza ? 'Tu inventario alcanza' : 'Te faltan insumos'}
-        </Text>
-        <Text style={styles.bannerSub}>
-          {alcanza
-            ? `Puedes producir los ${data.cantidadPedidos} pedido${data.cantidadPedidos === 1 ? '' : 's'} pendiente${data.cantidadPedidos === 1 ? '' : 's'}.`
-            : `Necesitas comprar ${data.listaCompras.length} insumo${data.listaCompras.length === 1 ? '' : 's'} para cumplir los pedidos.`}
-        </Text>
-      </Card>
+      <FadeInView>
+        <Card style={[styles.banner, { backgroundColor: alcanza ? colors.successBg : colors.warningBg }]}>
+          {alcanza ? (
+            <CheckCircle2 size={40} color={colors.success} />
+          ) : (
+            <Pulse>
+              <AlertTriangle size={40} color={colors.warning} />
+            </Pulse>
+          )}
+          <Text style={[styles.bannerTitulo, { color: alcanza ? colors.success : colors.warning }]}>
+            {alcanza ? 'Tu inventario alcanza' : 'Te faltan insumos'}
+          </Text>
+          <Text style={styles.bannerSub}>
+            {alcanza
+              ? `Puedes producir los ${data.cantidadPedidos} pedido${data.cantidadPedidos === 1 ? '' : 's'} pendiente${data.cantidadPedidos === 1 ? '' : 's'}.`
+              : `Necesitas comprar ${data.listaCompras.length} insumo${data.listaCompras.length === 1 ? '' : 's'} para cumplir los pedidos.`}
+          </Text>
+        </Card>
+      </FadeInView>
 
       {/* Resumen */}
       <View style={styles.statsRow}>

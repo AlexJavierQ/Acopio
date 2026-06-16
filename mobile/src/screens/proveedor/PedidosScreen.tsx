@@ -21,6 +21,7 @@ import {
 } from 'lucide-react-native';
 import Card from '../../components/Card';
 import EstadoChip, { ESTADOS, Estado, labelEstado } from '../../components/EstadoChip';
+import { animateLayout } from '../../components/Motion';
 import { api, formatoUSD } from '../../lib/api';
 import { colors, fonts, radii, spacing } from '../../theme';
 
@@ -109,7 +110,10 @@ function PedidoCard({
   return (
     <Card padded={false} style={{ overflow: 'hidden' }}>
       <Pressable
-        onPress={() => setAbierto((v) => !v)}
+        onPress={() => {
+          animateLayout();
+          setAbierto((v) => !v);
+        }}
         style={({ pressed }) => [styles.headerBtn, pressed && { backgroundColor: colors.primarySoft }]}
       >
         <View style={{ flex: 1, minWidth: 0 }}>

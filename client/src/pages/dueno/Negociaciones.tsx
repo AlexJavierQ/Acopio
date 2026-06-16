@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Handshake, Check, X, Plus, Minus, Trash2, Percent, DollarSign, Gift, Loader2 } from 'lucide-react';
 import { api, formatoUSD } from '../../lib/api';
 
@@ -58,7 +58,7 @@ export default function Negociaciones() {
 
   const tabCls = (active: boolean) =>
     `flex-1 sm:flex-initial px-5 py-2.5 rounded-xl font-semibold transition ${
-      active ? 'bg-amasa-500 text-white shadow-lg' : 'bg-white/60 text-amasa-800 hover:bg-white'
+      active ? 'bg-amasa-500 text-white shadow-lg' : 'bg-white text-amasa-800 hover:bg-white'
     }`;
 
   return (
@@ -245,7 +245,7 @@ function ModalResponder({
       className={`flex-1 flex flex-col items-center gap-1 py-3 rounded-xl border-2 font-semibold transition ${
         activo
           ? 'border-amasa-500 bg-amasa-50 text-amasa-900'
-          : 'border-amasa-100 bg-white/60 text-amasa-700 hover:bg-white'
+          : 'border-amasa-100 bg-white text-amasa-700 hover:bg-white'
       }`}
     >
       <Icon size={20} />
@@ -254,8 +254,8 @@ function ModalResponder({
   );
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-marron/40 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 space-y-4 my-8">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-marron/40 p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 my-8">
         <header>
           <h3 className="text-xl font-bold text-amasa-900">Responder negociación</h3>
           <p className="text-sm text-amasa-700">
@@ -314,7 +314,7 @@ function ModalResponder({
                   <button
                     key={p.id}
                     onClick={() => agregarBono(p)}
-                    className="text-left p-2 bg-white/70 hover:bg-white border border-amasa-100 rounded-lg text-xs"
+                    className="text-left p-2 bg-white hover:bg-white border border-amasa-100 rounded-lg text-xs"
                   >
                     <p className="font-semibold text-amasa-900 truncate">{p.nombre}</p>
                     <p className="text-amasa-600">{formatoUSD(p.precio)}</p>

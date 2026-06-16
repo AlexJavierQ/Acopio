@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { ShoppingCart, ClipboardList, LogOut, Store, MessageCircle, UserCheck, Repeat } from 'lucide-react';
 import Logo from '../components/Logo';
 import { useAuth } from '../store/auth';
@@ -8,6 +8,7 @@ export default function LayoutCliente() {
   const { usuario, setModo, logout } = useAuth();
   const cantidad = useCarrito((s) => s.cantidadTotal());
   const navigate = useNavigate();
+  const location = useLocation();
 
   function salir() {
     logout();
@@ -27,7 +28,7 @@ export default function LayoutCliente() {
   const esProveedor = usuario?.rol === 'PROVEEDOR';
 
   return (
-    <div className="min-h-screen flex flex-col bg-crema relative">
+    <div className="min-h-screen flex flex-col bg-crema app-bg">
       {/* Header */}
       <header className="bg-white border-b border-amasa-100 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -57,7 +58,7 @@ export default function LayoutCliente() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6 pb-28 relative">
+      <main key={location.pathname} className="flex-1 max-w-5xl mx-auto w-full px-4 py-6 pb-28 relative animate-fade-up">
         <Outlet />
       </main>
 

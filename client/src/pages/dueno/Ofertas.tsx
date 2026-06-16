@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import {
   Megaphone,
   Sparkles,
@@ -185,13 +185,13 @@ export default function Ofertas() {
   return (
     <div className="space-y-6">
       {/* Hero */}
-      <div className="rounded-3xl p-6 bg-gradient-to-br from-amasa-700 to-marron text-white relative overflow-hidden border border-white/15 shadow-[0_12px_40px_rgba(58,42,26,0.25)]">
+      <div className="rounded-2xl p-6 bg-gradient-to-br from-amasa-700 to-marron text-white relative overflow-hidden border border-white/15 shadow-[0_12px_40px_rgba(58,42,26,0.25)]">
         <div className="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-amasa-400/30 blur-3xl" />
         <div className="absolute -right-4 -bottom-12 w-48 h-48 rounded-full bg-orange-400/20 blur-3xl" />
 
         <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md rounded-full px-3 py-1 text-xs font-bold border border-white/20 mb-3">
+            <div className="inline-flex items-center gap-2 bg-white/15-md rounded-full px-3 py-1 text-xs font-bold border border-white/20 mb-3">
               <Sparkles size={14} /> IA + Clustering
             </div>
             <h1 className="text-4xl font-extrabold mb-1">Ofertas y Marketing</h1>
@@ -256,7 +256,7 @@ export default function Ofertas() {
 
 function StatHero({ icon, label, valor }: { icon: any; label: string; valor: string }) {
   return (
-    <div className="bg-white/15 backdrop-blur-md rounded-2xl p-3 border border-white/20">
+    <div className="bg-white/15-md rounded-2xl p-3 border border-white/20">
       <div className="flex items-center gap-1.5 text-xs opacity-90 mb-1">
         {icon}
         <span className="font-semibold">{label}</span>
@@ -295,7 +295,7 @@ function ClustersGrid({
               title={c.nombre}
             >
               {(c.clientes / totalClientes) > 0.08 && c.emoji}
-              <div className="absolute inset-0 hidden group-hover:flex items-center justify-center bg-black/30 backdrop-blur-sm">
+              <div className="absolute inset-0 hidden group-hover:flex items-center justify-center bg-black/30">
                 <span className="text-[10px] font-bold">{c.clientes}</span>
               </div>
             </div>
@@ -386,7 +386,7 @@ function ClusterDetalle({
   ].slice(0, Math.min(cluster.clientes, 8));
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-marron/30 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-marron/30" onClick={onClose}>
       <div
         className="card max-w-2xl w-full max-h-[90vh] overflow-y-auto !p-0 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
@@ -396,12 +396,12 @@ function ClusterDetalle({
           <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white/15 blur-2xl" />
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-9 h-9 rounded-xl bg-white/20 backdrop-blur grid place-items-center hover:bg-white/30 transition"
+            className="absolute top-4 right-4 w-9 h-9 rounded-xl bg-white/20 grid place-items-center hover:bg-white/30 transition"
           >
             <X size={18} />
           </button>
           <div className="relative flex items-start gap-4">
-            <div className="w-16 h-16 rounded-3xl bg-white/20 backdrop-blur grid place-items-center border border-white/30 shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-white/20 grid place-items-center border border-white/30 shrink-0">
               <Icon size={32} />
             </div>
             <div>
@@ -422,7 +422,7 @@ function ClusterDetalle({
             <p className="text-xs font-bold text-amasa-700 uppercase mb-2">Características del segmento</p>
             <div className="flex flex-wrap gap-2">
               {cluster.caracteristicas.map((c, i) => (
-                <span key={i} className="bg-white/60 backdrop-blur border border-white/60 rounded-full px-3 py-1 text-xs font-semibold text-amasa-900">
+                <span key={i} className="bg-white border border-white/60 rounded-full px-3 py-1 text-xs font-semibold text-amasa-900">
                   ✓ {c}
                 </span>
               ))}
@@ -430,7 +430,7 @@ function ClusterDetalle({
           </div>
 
           {/* Recomendación IA */}
-          <div className="bg-gradient-to-br from-amasa-50 to-amasa-100 backdrop-blur-xl border border-white/60 rounded-2xl p-4">
+          <div className="bg-gradient-to-br from-amasa-50 to-amasa-100 border border-white/60 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amasa-500 to-amasa-700 text-white grid place-items-center shadow-suave">
                 <Sparkles size={14} />
@@ -446,7 +446,7 @@ function ClusterDetalle({
             </p>
             <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2">
               {clientesMock.map((nombre, i) => (
-                <div key={i} className="flex items-center gap-3 p-2 rounded-xl bg-white/40 backdrop-blur border border-white/50">
+                <div key={i} className="flex items-center gap-3 p-2 rounded-xl bg-white border border-white/50">
                   <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${cluster.gradient} text-white grid place-items-center font-bold text-xs shrink-0`}>
                     {nombre.charAt(0)}
                   </div>
@@ -499,7 +499,7 @@ function OfertasList({ ofertas, onCrear }: { ofertas: Oferta[]; onCrear: () => v
                       : o.estado === 'PROGRAMADA'
                       ? 'bg-amasa-100/80 text-amasa-900'
                       : 'bg-gray-100/80 text-gray-700'
-                  } backdrop-blur border border-white/50`}
+                  } border border-white/50`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
                   {o.estado}
@@ -514,15 +514,15 @@ function OfertasList({ ofertas, onCrear }: { ofertas: Oferta[]; onCrear: () => v
               </p>
 
               <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="bg-white/50 backdrop-blur border border-white/60 rounded-xl p-2">
+                <div className="bg-white border border-white/60 rounded-xl p-2">
                   <p className="text-[10px] text-amasa-600 font-semibold uppercase">Alcance</p>
                   <p className="text-lg font-extrabold">{o.alcance}</p>
                 </div>
-                <div className="bg-white/50 backdrop-blur border border-white/60 rounded-xl p-2">
+                <div className="bg-white border border-white/60 rounded-xl p-2">
                   <p className="text-[10px] text-amasa-600 font-semibold uppercase">Convirtieron</p>
                   <p className="text-lg font-extrabold text-green-600">{o.conversion}</p>
                 </div>
-                <div className="bg-white/50 backdrop-blur border border-white/60 rounded-xl p-2">
+                <div className="bg-white border border-white/60 rounded-xl p-2">
                   <p className="text-[10px] text-amasa-600 font-semibold uppercase">Tasa</p>
                   <p className="text-lg font-extrabold text-amasa-600">
                     {o.alcance ? Math.round((o.conversion / o.alcance) * 100) : 0}%
@@ -531,7 +531,7 @@ function OfertasList({ ofertas, onCrear }: { ofertas: Oferta[]; onCrear: () => v
               </div>
 
               <div className="flex gap-2 mt-4">
-                <button className="flex-1 bg-white/60 backdrop-blur border border-white/60 text-amasa-800 rounded-xl py-2 text-xs font-bold flex items-center justify-center gap-1 hover:bg-white/80 transition">
+                <button className="flex-1 bg-white border border-white/60 text-amasa-800 rounded-xl py-2 text-xs font-bold flex items-center justify-center gap-1 hover:bg-white/80 transition">
                   <Eye size={12} /> Ver detalle
                 </button>
                 <button className="flex-1 bg-amasa-500 text-white rounded-xl py-2 text-xs font-bold flex items-center justify-center gap-1 hover:bg-amasa-600 transition">
@@ -565,9 +565,9 @@ function CrearOferta({ onClose }: { onClose: () => void }) {
 
   if (confirmado) {
     return (
-      <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-marron/30 backdrop-blur-sm">
+      <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-marron/30">
         <div className="card max-w-md w-full text-center !p-8">
-          <div className="w-20 h-20 rounded-full bg-green-100/70 backdrop-blur-xl border border-green-200/60 grid place-items-center mb-4 mx-auto shadow-[0_8px_32px_rgba(34,197,94,0.25)]">
+          <div className="w-20 h-20 rounded-full bg-green-100/70 border border-green-200/60 grid place-items-center mb-4 mx-auto shadow-[0_8px_32px_rgba(34,197,94,0.25)]">
             <CheckCircle2 className="text-green-600" size={48} />
           </div>
           <h2 className="text-2xl font-extrabold mb-2">¡Oferta enviada!</h2>
@@ -583,7 +583,7 @@ function CrearOferta({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-marron/30 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-marron/30" onClick={onClose}>
       <div
         className="card max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
@@ -597,7 +597,7 @@ function CrearOferta({ onClose }: { onClose: () => void }) {
           </div>
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-xl bg-white/60 backdrop-blur border border-white/60 grid place-items-center hover:bg-white/80 transition"
+            className="w-9 h-9 rounded-xl bg-white border border-white/60 grid place-items-center hover:bg-white/80 transition"
           >
             <X size={18} />
           </button>
@@ -609,7 +609,7 @@ function CrearOferta({ onClose }: { onClose: () => void }) {
             <div
               key={p}
               className={`flex-1 h-1.5 rounded-full transition ${
-                p <= paso ? 'bg-gradient-to-r from-amasa-500 to-amasa-600' : 'bg-white/50'
+                p <= paso ? 'bg-gradient-to-r from-amasa-500 to-amasa-600' : 'bg-white'
               }`}
             />
           ))}
@@ -629,7 +629,7 @@ function CrearOferta({ onClose }: { onClose: () => void }) {
                     className={`text-left rounded-2xl p-3 border-2 transition ${
                       sel
                         ? `bg-gradient-to-br ${c.gradient} text-white border-white/30 shadow-suave`
-                        : 'bg-white/60 backdrop-blur border-white/60 hover:bg-white/80'
+                        : 'bg-white border-white/60 hover:bg-white/80'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
@@ -658,7 +658,7 @@ function CrearOferta({ onClose }: { onClose: () => void }) {
                   className={`text-left rounded-2xl p-4 border-2 transition ${
                     tipo === t.id
                       ? 'bg-gradient-to-br from-amasa-500 to-amasa-600 text-white border-white/30 shadow-suave'
-                      : 'bg-white/60 backdrop-blur border-white/60 hover:bg-white/80'
+                      : 'bg-white border-white/60 hover:bg-white/80'
                   }`}
                 >
                   <div className="mb-2">{t.icon}</div>
@@ -699,7 +699,7 @@ function CrearOferta({ onClose }: { onClose: () => void }) {
                 className="input-glass resize-none"
               />
               <p className="text-[10px] text-amasa-600 mt-1">
-                Usa <code className="bg-white/60 px-1 rounded">{'{nombre}'}</code> para personalizar.
+                Usa <code className="bg-white px-1 rounded">{'{nombre}'}</code> para personalizar.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -719,11 +719,11 @@ function CrearOferta({ onClose }: { onClose: () => void }) {
 
             {/* Preview */}
             {cluster && (
-              <div className="bg-gradient-to-br from-amasa-50 to-amasa-100 backdrop-blur-xl border border-white/60 rounded-2xl p-4">
+              <div className="bg-gradient-to-br from-amasa-50 to-amasa-100 border border-white/60 rounded-2xl p-4">
                 <p className="text-xs font-bold text-amasa-700 uppercase mb-2 flex items-center gap-1">
                   <Eye size={12} /> Vista previa
                 </p>
-                <div className="bg-white/70 backdrop-blur border border-white/60 rounded-2xl p-3">
+                <div className="bg-white border border-white/60 rounded-2xl p-3">
                   <div className="flex items-center gap-2 mb-2">
                     <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${cluster.gradient} text-white grid place-items-center text-sm font-bold shadow-suave`}>
                       🥖

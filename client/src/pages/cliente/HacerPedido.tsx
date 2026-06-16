@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Minus, Plus, Trash2, Clock, Send, ShoppingBasket, Handshake, ArrowLeft, Store } from 'lucide-react';
 import { api, formatoUSD } from '../../lib/api';
@@ -110,7 +110,7 @@ export default function HacerPedido() {
   return (
     <div className="space-y-6">
       <header className="flex items-center gap-3">
-        <Link to={`/proveedores/${proveedorId}`} className="p-2 rounded-xl bg-white/60 text-amasa-700 hover:bg-white">
+        <Link to={`/proveedores/${proveedorId}`} className="p-2 rounded-xl bg-white text-amasa-700 hover:bg-white">
           <ArrowLeft size={18} />
         </Link>
         <div className="flex-1 min-w-0">

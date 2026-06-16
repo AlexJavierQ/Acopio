@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Cookie, Wheat, ListChecks, ShieldCheck, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { api } from '../../lib/api';
 
@@ -39,7 +39,7 @@ export default function Produccion() {
 
       {/* Banner global */}
       <div
-        className={`rounded-3xl p-5 flex items-center gap-4 ${
+        className={`rounded-2xl p-5 flex items-center gap-4 ${
           reporte.todoAlcanza
             ? 'bg-green-50 border-2 border-green-200 text-green-800'
             : 'bg-red-50 border-2 border-red-200 text-red-800'

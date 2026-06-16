@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Send, MessageCircle, Store, User } from 'lucide-react';
 import { api } from '../../lib/api';
@@ -95,7 +95,7 @@ function ListaConversaciones({ activeId }: { activeId: number | null }) {
                 <button
                   onClick={() => navigate(`/chat/${c.otroUsuario.id}`)}
                   className={`w-full text-left flex items-center gap-3 p-2 rounded-xl transition ${
-                    activo ? 'bg-amasa-100' : 'hover:bg-white/60'
+                    activo ? 'bg-amasa-100' : 'hover:bg-white'
                   }`}
                 >
                   <div
@@ -204,7 +204,7 @@ function Ventana({ otroId }: { otroId: number | null }) {
 
   return (
     <section className="card p-0 flex flex-col overflow-hidden">
-      <header className="flex items-center gap-3 px-4 py-3 border-b border-white/60 bg-white/40">
+      <header className="flex items-center gap-3 px-4 py-3 border-b border-white/60 bg-white">
         <Link to="/chat" className="md:hidden text-amasa-700"><ArrowLeft /></Link>
         {otro && (
           <>
@@ -249,7 +249,7 @@ function Ventana({ otroId }: { otroId: number | null }) {
         <div ref={fin} />
       </div>
 
-      <form onSubmit={enviar} className="flex items-center gap-2 p-3 border-t border-white/60 bg-white/40">
+      <form onSubmit={enviar} className="flex items-center gap-2 p-3 border-t border-white/60 bg-white">
         <input
           value={texto}
           onChange={(e) => setTexto(e.target.value)}

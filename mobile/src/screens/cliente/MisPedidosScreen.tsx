@@ -5,6 +5,7 @@ import { Clock, ShoppingBag, Store, Handshake, Gift, MessageCircle, ChevronDown,
 import Card from '../../components/Card';
 import EmptyState from '../../components/EmptyState';
 import EstadoChip, { Estado } from '../../components/EstadoChip';
+import { animateLayout } from '../../components/Motion';
 import { api, formatoUSD } from '../../lib/api';
 import { colors, radii, spacing } from '../../theme';
 
@@ -94,7 +95,10 @@ function PedidoCard({ pedido: p }: { pedido: Pedido }) {
     <Card padded={false} style={{ overflow: 'hidden' }}>
       {/* Cabecera siempre visible */}
       <Pressable
-        onPress={() => setAbierto((v) => !v)}
+        onPress={() => {
+          animateLayout();
+          setAbierto((v) => !v);
+        }}
         style={({ pressed }) => [styles.headerBtn, pressed && { backgroundColor: colors.primarySoft }]}
       >
         <View style={{ flex: 1, minWidth: 0 }}>

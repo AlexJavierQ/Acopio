@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+﻿import { useState } from 'react';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   ClipboardList,
@@ -33,6 +33,7 @@ const links = [
 export default function LayoutDueno() {
   const { usuario, setModo, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
 
   function salir() {
@@ -46,7 +47,7 @@ export default function LayoutDueno() {
   }
 
   return (
-    <div className="min-h-screen flex bg-crema relative">
+    <div className="min-h-screen flex bg-crema app-bg">
       {/* Sidebar */}
       <aside
         className={`fixed lg:static inset-y-0 left-0 z-30 w-72 bg-white border-r border-amasa-100 transform transition-transform lg:translate-x-0 ${
@@ -109,7 +110,7 @@ export default function LayoutDueno() {
 
       {open && (
         <div
-          className="fixed inset-0 bg-marron/30 backdrop-blur-sm z-20 lg:hidden"
+          className="fixed inset-0 bg-marron/30 z-20 lg:hidden"
           onClick={() => setOpen(false)}
         />
       )}
@@ -123,7 +124,7 @@ export default function LayoutDueno() {
           <Logo size={24} />
           <div className="w-6" />
         </header>
-        <main className="p-4 lg:p-8 max-w-7xl mx-auto relative">
+        <main key={location.pathname} className="p-4 lg:p-8 max-w-7xl mx-auto relative animate-fade-up">
           <Outlet />
         </main>
       </div>

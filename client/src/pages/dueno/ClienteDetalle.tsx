@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Phone, MapPin, Clock } from 'lucide-react';
 import { api, formatoUSD } from '../../lib/api';
@@ -21,7 +21,7 @@ export default function ClienteDetalle() {
       </Link>
 
       <div className="card flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-        <div className="w-20 h-20 rounded-3xl bg-amasa-500 text-white grid place-items-center text-3xl font-extrabold">
+        <div className="w-20 h-20 rounded-2xl bg-amasa-500 text-white grid place-items-center text-3xl font-extrabold">
           {cliente.nombre.charAt(0).toUpperCase()}
         </div>
         <div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { CheckCircle2, ShoppingBag, Handshake, MessageCircle, Store } from 'lucide-react';
 import { api, formatoUSD } from '../../lib/api';
@@ -55,7 +55,7 @@ export default function Confirmacion() {
         {pedido?.proveedor?.id && (
           <Link
             to={`/chat/${pedido.proveedor.id}`}
-            className="px-4 py-3 rounded-2xl bg-white/70 border border-amasa-200 text-amasa-800 font-semibold flex items-center justify-center gap-1"
+            className="px-4 py-3 rounded-2xl bg-white border border-amasa-200 text-amasa-800 font-semibold flex items-center justify-center gap-1"
           >
             <MessageCircle size={16} /> Chat
           </Link>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -498,7 +498,7 @@ function Splash({ modo, onContinuar }: { modo: Modo; onContinuar: () => void }) 
       {/* Contenido */}
       <div className="relative z-10" />
       <div className="relative z-10 text-center">
-        <div className="w-28 h-28 mx-auto rounded-[32px] bg-white/15 backdrop-blur grid place-items-center mb-6 border border-white/30 shadow-2xl">
+        <div className="w-28 h-28 mx-auto rounded-[32px] bg-white/15 grid place-items-center mb-6 border border-white/30 shadow-2xl">
           {esCliente ? <Wheat size={56} strokeWidth={2.2} /> : <ChefHat size={56} strokeWidth={2.2} />}
         </div>
         <h1 className="text-6xl font-extrabold tracking-tight mb-2 drop-shadow-lg">Amasa</h1>
@@ -506,7 +506,7 @@ function Splash({ modo, onContinuar }: { modo: Modo; onContinuar: () => void }) 
           {esCliente ? 'Pan calientito, sin llamadas.' : 'Tu panadería en el bolsillo.'}
         </p>
         {!esCliente && (
-          <p className="mt-4 inline-flex items-center gap-1 bg-white/20 backdrop-blur px-3 py-1 rounded-full text-xs font-bold border border-white/30">
+          <p className="mt-4 inline-flex items-center gap-1 bg-white/20 px-3 py-1 rounded-full text-xs font-bold border border-white/30">
             <ChefHat size={12} /> Modo Panadera/o
           </p>
         )}
@@ -654,7 +654,7 @@ function CatalogoMobile({
                       {formato(p.precio)}
                     </span>
                     {enCarrito > 0 ? (
-                      <div className="flex items-center gap-0.5 bg-white/70 backdrop-blur border border-white/60 rounded-xl">
+                      <div className="flex items-center gap-0.5 bg-white border border-white/60 rounded-xl">
                         <button
                           onClick={() => setCantidad(p.id, enCarrito - 1)}
                           className="w-6 h-6 grid place-items-center text-amasa-700"
@@ -746,7 +746,7 @@ function CarritoMobile({
                 <p className="font-bold text-sm truncate">{producto.nombre}</p>
                 <p className="text-xs text-amasa-700">{formato(producto.precio)} c/u</p>
               </div>
-              <div className="flex items-center gap-0.5 bg-white/60 backdrop-blur border border-white/60 rounded-xl">
+              <div className="flex items-center gap-0.5 bg-white border border-white/60 rounded-xl">
                 <button
                   onClick={() => setCantidad(producto.id, cantidad - 1)}
                   className="w-7 h-7 grid place-items-center text-amasa-700"
@@ -778,7 +778,7 @@ function CarritoMobile({
           <input
             type="time"
             defaultValue="07:30"
-            className="w-full bg-white/60 backdrop-blur border border-white/60 rounded-xl px-3 py-2.5 text-sm font-semibold focus:outline-none"
+            className="w-full bg-white border border-white/60 rounded-xl px-3 py-2.5 text-sm font-semibold focus:outline-none"
             readOnly
           />
         </div>
@@ -817,7 +817,7 @@ function ConfirmacionMobile({
     <div className="h-full relative flex flex-col items-center justify-center bg-crema p-6 text-center overflow-hidden">
       <Blobs variant="cliente" />
 
-      <div className="relative z-10 w-24 h-24 rounded-full bg-green-100/70 backdrop-blur-xl border border-green-200/60 grid place-items-center mb-4 shadow-[0_8px_32px_rgba(34,197,94,0.25)] animate-pulse">
+      <div className="relative z-10 w-24 h-24 rounded-full bg-green-100/70 border border-green-200/60 grid place-items-center mb-4 shadow-[0_8px_32px_rgba(34,197,94,0.25)] animate-pulse">
         <CheckCircle2 className="text-green-600" size={56} />
       </div>
       <h2 className="relative z-10 text-3xl font-extrabold mb-1">¡Pedido enviado!</h2>
@@ -836,7 +836,7 @@ function ConfirmacionMobile({
         </div>
         <div className="flex justify-between text-sm items-center">
           <span className="text-amasa-700">Estado</span>
-          <span className="chip bg-amasa-100/80 backdrop-blur text-amasa-900 !text-[10px] border border-white/50">
+          <span className="chip bg-amasa-100/80 text-amasa-900 !text-[10px] border border-white/50">
             <span className="w-1.5 h-1.5 rounded-full bg-amasa-500" />
             Recibido
           </span>
@@ -919,7 +919,7 @@ function MisPedidosMobile({
                   <Clock size={12} /> {p.fecha} · {p.hora}
                 </p>
               </div>
-              <span className={`chip ${p.color} !text-[10px] backdrop-blur border border-white/50`}>
+              <span className={`chip ${p.color} !text-[10px] border border-white/50`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
                 {p.estado}
               </span>
@@ -991,7 +991,7 @@ function BottomNav({
   );
 
   return (
-    <div className="absolute bottom-2 left-3 right-3 glass-strong rounded-3xl grid grid-cols-3 px-2 py-2 z-30">
+    <div className="absolute bottom-2 left-3 right-3 glass-strong rounded-2xl grid grid-cols-3 px-2 py-2 z-30">
       <Item id="catalogo" icon={<Store size={20} />} label="Catálogo" onClick={onCatalogo} />
       <Item id="carrito" icon={<ShoppingCart size={20} />} label="Mi pedido" onClick={onCarrito} badge={cantidad} />
       <Item id="pedidos" icon={<ClipboardList size={20} />} label="Pedidos" onClick={onPedidos} />
@@ -1108,17 +1108,17 @@ function AdminDashboardMobile({
 
       <div className="relative z-10 flex-1 overflow-y-auto px-5 pb-24 space-y-4">
         {/* HERO con liquid glass sobre degradado */}
-        <div className="rounded-3xl p-5 bg-gradient-to-br from-amasa-500/95 to-amasa-700/95 backdrop-blur-xl text-white shadow-[0_12px_40px_rgba(200,137,63,0.35)] relative overflow-hidden border border-white/20">
+        <div className="rounded-2xl p-5 bg-gradient-to-br from-amasa-500/95 to-amasa-700/95 text-white shadow-[0_12px_40px_rgba(200,137,63,0.35)] relative overflow-hidden border border-white/20">
           <div className="absolute -right-6 -top-6 w-32 h-32 rounded-full bg-white/15 blur-md" />
           <div className="absolute -right-2 -bottom-8 w-24 h-24 rounded-full bg-white/10 blur-md" />
           <p className="text-xs font-bold uppercase tracking-wider opacity-90 relative">Hoy hornearás</p>
           <p className="text-6xl font-extrabold leading-none mt-1 relative">186</p>
           <p className="text-sm opacity-95 mb-4 relative">unidades para 12 pedidos</p>
           <div className="flex gap-2 relative">
-            <span className="bg-white/25 backdrop-blur-md rounded-full px-3 py-1 text-xs font-bold border border-white/20">
+            <span className="bg-white/25-md rounded-full px-3 py-1 text-xs font-bold border border-white/20">
               💰 $84.20
             </span>
-            <span className="bg-white/25 backdrop-blur-md rounded-full px-3 py-1 text-xs font-bold border border-white/20">
+            <span className="bg-white/25-md rounded-full px-3 py-1 text-xs font-bold border border-white/20">
               ⏰ 7:30 primer pedido
             </span>
           </div>
@@ -1127,7 +1127,7 @@ function AdminDashboardMobile({
         {/* Alerta crítica con glass rojo */}
         <button
           onClick={onInventario}
-          className="w-full bg-red-50/70 backdrop-blur-xl border border-red-200/70 rounded-2xl p-3 flex items-center gap-3 text-left active:scale-[0.98] transition shadow-[0_8px_24px_rgba(220,38,38,0.12)]"
+          className="w-full bg-red-50/70 border border-red-200/70 rounded-2xl p-3 flex items-center gap-3 text-left active:scale-[0.98] transition shadow-[0_8px_24px_rgba(220,38,38,0.12)]"
         >
           <div className="w-10 h-10 rounded-xl bg-red-500 text-white grid place-items-center shrink-0 shadow-suave">
             <AlertTriangle size={18} />
@@ -1320,7 +1320,7 @@ function AdminPedidosMobile({
                 className={`relative py-2 rounded-xl text-[10px] font-bold transition ${
                   activo
                     ? `${t.color} text-white shadow-suave`
-                    : 'bg-white/40 backdrop-blur text-amasa-700 border border-white/40'
+                    : 'bg-white text-amasa-700 border border-white/40'
                 }`}
               >
                 <span className="block text-base">{n}</span>
@@ -1374,7 +1374,7 @@ function AdminPedidosMobile({
                 {/* Expandible */}
                 {abierto && (
                   <div className="px-3 pb-3 space-y-2 border-t border-white/40">
-                    <div className="bg-white/40 backdrop-blur rounded-xl p-2 space-y-0.5 mt-2 border border-white/40">
+                    <div className="bg-white rounded-xl p-2 space-y-0.5 mt-2 border border-white/40">
                       {p.items.map((it, i) => (
                         <p key={i} className="text-xs text-amasa-800 flex justify-between">
                           <span><strong>{it.cantidad}×</strong> {it.nombre}</span>
@@ -1441,7 +1441,7 @@ function AdminProduccionMobile({
       <Blobs variant="panadero" />
 
       {/* Hero compacto con glass sobre degradado */}
-      <div className="relative z-10 bg-gradient-to-br from-orange-500/95 to-orange-600/95 backdrop-blur-xl text-white px-5 pt-4 pb-7 overflow-hidden border-b border-white/20 shadow-[0_8px_32px_rgba(234,124,28,0.3)]">
+      <div className="relative z-10 bg-gradient-to-br from-orange-500/95 to-orange-600/95 text-white px-5 pt-4 pb-7 overflow-hidden border-b border-white/20 shadow-[0_8px_32px_rgba(234,124,28,0.3)]">
         <div className="absolute -right-4 -bottom-4 opacity-20">
           <Factory size={120} />
         </div>
@@ -1451,13 +1451,13 @@ function AdminProduccionMobile({
           <p className="text-sm opacity-90">unidades · 3 pedidos</p>
         </div>
         {!todoAlcanza && (
-          <div className="mt-3 inline-flex items-center gap-1.5 bg-red-600/90 backdrop-blur rounded-full px-3 py-1 text-xs font-bold relative border border-white/20">
+          <div className="mt-3 inline-flex items-center gap-1.5 bg-red-600/90 rounded-full px-3 py-1 text-xs font-bold relative border border-white/20">
             <AlertTriangle size={12} />
             Falta manteca · revisa antes de empezar
           </div>
         )}
         {todoAlcanza && (
-          <div className="mt-3 inline-flex items-center gap-1.5 bg-green-600/90 backdrop-blur rounded-full px-3 py-1 text-xs font-bold relative border border-white/20">
+          <div className="mt-3 inline-flex items-center gap-1.5 bg-green-600/90 rounded-full px-3 py-1 text-xs font-bold relative border border-white/20">
             <CheckCircle2 size={12} />
             Todo listo
           </div>
@@ -1496,7 +1496,7 @@ function AdminProduccionMobile({
           <div className="glass rounded-2xl divide-y divide-white/40 overflow-hidden">
             {productos.map((p, i) => (
               <div key={i} className="flex items-center gap-3 p-3">
-                <div className="w-10 h-10 rounded-xl bg-white/60 backdrop-blur border border-white/50 grid place-items-center text-xl">
+                <div className="w-10 h-10 rounded-xl bg-white border border-white/50 grid place-items-center text-xl">
                   {p.emoji}
                 </div>
                 <span className="flex-1 font-semibold text-sm">{p.nombre}</span>
@@ -1512,7 +1512,7 @@ function AdminProduccionMobile({
             {[...insumos].sort((a, b) => Number(a.alcanza) - Number(b.alcanza)).map((i, idx) => (
               <div
                 key={idx}
-                className={`rounded-2xl p-3 ${i.alcanza ? 'glass' : 'bg-red-50/70 backdrop-blur-xl border border-red-200/70 shadow-[0_8px_24px_rgba(220,38,38,0.1)]'}`}
+                className={`rounded-2xl p-3 ${i.alcanza ? 'glass' : 'bg-red-50/70 border border-red-200/70 shadow-[0_8px_24px_rgba(220,38,38,0.1)]'}`}
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
@@ -1534,7 +1534,7 @@ function AdminProduccionMobile({
                   <span className="text-amasa-300">•</span>
                   <span>Tengo <strong className="text-amasa-900">{i.stock}{i.unidad}</strong></span>
                 </div>
-                <div className="h-1.5 bg-white/40 backdrop-blur rounded-full overflow-hidden border border-white/50">
+                <div className="h-1.5 bg-white rounded-full overflow-hidden border border-white/50">
                   <div
                     className={`h-full ${i.alcanza ? 'bg-green-500' : 'bg-red-500'}`}
                     style={{ width: `${Math.min(100, (i.stock / Math.max(i.necesario, 0.001)) * 100)}%` }}
@@ -1601,7 +1601,7 @@ function AdminInventarioMobile({
         </div>
 
         {/* Tabs */}
-        <div className="bg-white/40 backdrop-blur rounded-xl p-1 grid grid-cols-2 gap-1 border border-white/50">
+        <div className="bg-white rounded-xl p-1 grid grid-cols-2 gap-1 border border-white/50">
           <button
             onClick={() => setTab('todos')}
             className={`py-1.5 rounded-lg text-xs font-bold transition ${
@@ -1640,7 +1640,7 @@ function AdminInventarioMobile({
                   key={i.id}
                   className={`rounded-2xl p-3 ${
                     bajo
-                      ? 'bg-red-50/70 backdrop-blur-xl border border-red-200/70 shadow-[0_8px_24px_rgba(220,38,38,0.1)]'
+                      ? 'bg-red-50/70 border border-red-200/70 shadow-[0_8px_24px_rgba(220,38,38,0.1)]'
                       : 'glass'
                   }`}
                 >
@@ -1655,7 +1655,7 @@ function AdminInventarioMobile({
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => ajustar(i.id, -1)}
-                        className="w-7 h-7 grid place-items-center bg-white/70 backdrop-blur border border-white/60 text-amasa-700 rounded-lg active:scale-95"
+                        className="w-7 h-7 grid place-items-center bg-white border border-white/60 text-amasa-700 rounded-lg active:scale-95"
                       >
                         <Minus size={12} />
                       </button>
@@ -1672,7 +1672,7 @@ function AdminInventarioMobile({
                   ) : (
                     <button
                       onClick={() => setEditando(i.id)}
-                      className="w-full rounded-lg py-1.5 text-center active:scale-95 transition bg-white/50 backdrop-blur border border-white/60"
+                      className="w-full rounded-lg py-1.5 text-center active:scale-95 transition bg-white border border-white/60"
                     >
                       <span className={`text-lg font-extrabold tabular-nums ${bajo ? 'text-red-700' : 'text-amasa-900'}`}>
                         {i.stock}
@@ -1699,7 +1699,7 @@ function AdminInventarioMobile({
       {/* FAB con menú de acciones */}
       {fabAbierto && (
         <div
-          className="absolute inset-0 bg-marron/20 backdrop-blur-sm z-20"
+          className="absolute inset-0 bg-marron/20 z-20"
           onClick={() => setFabAbierto(false)}
         />
       )}
@@ -1799,7 +1799,7 @@ function BottomNavAdmin({
   );
 
   return (
-    <div className="absolute bottom-2 left-3 right-3 glass-strong rounded-3xl grid grid-cols-4 px-2 py-2 z-30">
+    <div className="absolute bottom-2 left-3 right-3 glass-strong rounded-2xl grid grid-cols-4 px-2 py-2 z-30">
       <Item id="dashboard" icon={<LayoutDashboard size={20} />} label="Inicio" onClick={onDashboard} />
       <Item id="pedidos" icon={<ClipboardList size={20} />} label="Pedidos" onClick={onPedidos} badgeNum={activa !== 'pedidos' ? badge : undefined} />
       <Item id="produccion" icon={<Factory size={20} />} label="Producir" onClick={onProduccion} />

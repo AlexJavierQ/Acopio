@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, MessageCircle, Plus, Minus, ShoppingCart, Send } from 'lucide-react';
 import { api, formatoUSD } from '../../lib/api';
@@ -90,7 +90,7 @@ export default function ProveedorDetalle() {
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
             to={`/chat/${data.id}`}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/70 hover:bg-white border border-amasa-200 text-amasa-800 text-sm font-semibold transition"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-white border border-amasa-200 text-amasa-800 text-sm font-semibold transition"
           >
             <MessageCircle size={16} /> Chatear
           </Link>
