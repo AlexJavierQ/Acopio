@@ -124,6 +124,8 @@ router.patch('/:id/aceptar', requireProveedor, async (req: AuthedRequest, res) =
       where: { id: neg.pedidoId },
       data: { descuento, total: totalFinal },
     }),
+    // HU15: mantener la nota de venta sincronizada con el total final.
+    prisma.notaVenta.updateMany({ where: { pedidoId: neg.pedidoId }, data: { total: totalFinal } }),
     ...(tipo === 'BONO' && bonos
       ? bonos.flatMap((b) => [
           prisma.negociacionBono.create({ data: { negociacionId: id, productoId: b.productoId, cantidad: b.cantidad } }),

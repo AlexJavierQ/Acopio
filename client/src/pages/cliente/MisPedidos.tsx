@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, ShoppingBag, Store, Handshake, Gift, MessageCircle } from 'lucide-react';
+import { Clock, ShoppingBag, Store, Handshake, Gift, MessageCircle, Ban } from 'lucide-react';
 import { api, formatoUSD } from '../../lib/api';
 import EstadoChip, { Estado } from '../../components/EstadoChip';
 
@@ -23,12 +23,30 @@ interface Pedido {
 export default function MisPedidos() {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cancelando, setCancelando] = useState<number | null>(null);
 
-  useEffect(() => {
+  function cargar() {
     api<Pedido[]>('/pedidos')
       .then(setPedidos)
       .finally(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    cargar();
   }, []);
+
+  async function cancelar(id: number) {
+    if (!confirm('¿Cancelar este pedido? No se puede deshacer.')) return;
+    setCancelando(id);
+    try {
+      await api(`/pedidos/${id}/cancelar`, { method: 'PATCH' });
+      cargar();
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setCancelando(null);
+    }
+  }
 
   if (loading) return <p className="text-amasa-700">Cargando…</p>;
 
@@ -114,12 +132,23 @@ export default function MisPedidos() {
               </div>
             </div>
 
-            <Link
-              to={`/chat/${p.proveedor.id}`}
-              className="text-xs text-amasa-700 hover:text-amasa-900 inline-flex items-center gap-1 font-semibold"
-            >
-              <MessageCircle size={12} /> Chatear con el proveedor
-            </Link>
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <Link
+                to={`/chat/${p.proveedor.id}`}
+                className="text-xs text-amasa-700 hover:text-amasa-900 inline-flex items-center gap-1 font-semibold"
+              >
+                <MessageCircle size={12} /> Chatear con el proveedor
+              </Link>
+              {p.estado === 'RECIBIDO' && (
+                <button
+                  onClick={() => cancelar(p.id)}
+                  disabled={cancelando === p.id}
+                  className="text-xs inline-flex items-center gap-1 font-semibold px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-50"
+                >
+                  <Ban size={13} /> {cancelando === p.id ? 'Cancelando…' : 'Cancelar pedido'}
+                </button>
+              )}
+            </div>
           </div>
         );
       })}

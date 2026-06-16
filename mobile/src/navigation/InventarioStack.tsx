@@ -5,6 +5,7 @@ import RecetasScreen from '../screens/proveedor/RecetasScreen';
 import RecetaEditorScreen from '../screens/proveedor/RecetaEditorScreen';
 import RequerimientosScreen from '../screens/proveedor/RequerimientosScreen';
 import VentasScreen from '../screens/proveedor/VentasScreen';
+import ProductosScreen from '../screens/proveedor/ProductosScreen';
 import LogoutButton from '../components/LogoutButton';
 import { headerOpts } from './options';
 import type { InventarioStackParamList } from './types';
@@ -27,6 +28,7 @@ export default function InventarioStack() {
       />
       <Stack.Screen name="Requerimientos" component={RequerimientosScreen} options={{ title: 'Requerimientos' }} />
       <Stack.Screen name="Ventas" component={VentasScreen} options={{ title: 'Ventas y ganancias' }} />
+      <Stack.Screen name="Productos" component={ProductosScreen} options={{ title: 'Productos' }} />
     </Stack.Navigator>
   );
 }

@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CheckCircle2, AlertTriangle, ShoppingCart, Boxes, Factory, BookOpen } from 'lucide-react-native';
 import Card from '../../components/Card';
+import Button from '../../components/Button';
 import EmptyState from '../../components/EmptyState';
 import { FadeInView, Pulse } from '../../components/Motion';
 import { api } from '../../lib/api';
@@ -36,6 +37,7 @@ export default function RequerimientosScreen() {
   const [data, setData] = useState<Requerimientos | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [confirmando, setConfirmando] = useState(false);
 
   const cargar = useCallback(async () => {
     try {
@@ -46,6 +48,33 @@ export default function RequerimientosScreen() {
       setRefreshing(false);
     }
   }, []);
+
+  function confirmarProduccion() {
+    Alert.alert(
+      'Confirmar producción',
+      'Esto descuenta del inventario los insumos de los pedidos nuevos y los pasa a "En producción". ¿Continuar?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Confirmar',
+          onPress: async () => {
+            setConfirmando(true);
+            try {
+              const r = await api<{ pedidosConfirmados: number; insumosDescontados: number }>('/produccion/confirmar', {
+                method: 'POST',
+              });
+              Alert.alert('Listo', `${r.pedidosConfirmados} pedido(s) en producción · ${r.insumosDescontados} insumo(s) descontados.`);
+              cargar();
+            } catch (e: any) {
+              Alert.alert('Error', e.message);
+            } finally {
+              setConfirmando(false);
+            }
+          },
+        },
+      ]
+    );
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -116,6 +145,15 @@ export default function RequerimientosScreen() {
         <Stat icon={<Boxes size={18} color={colors.primaryDark} />} valor={data.cantidadPedidos} label="Pedidos" />
         <Stat icon={<Factory size={18} color={colors.primaryDark} />} valor={data.totalAProducir} label="Unidades" />
       </View>
+
+      {/* Confirmar producción (HU22) */}
+      <Button
+        title={confirmando ? 'Descontando…' : 'Confirmar producción y descontar'}
+        onPress={confirmarProduccion}
+        loading={confirmando}
+        icon={<Factory size={18} color={colors.white} />}
+        fullWidth
+      />
 
       {/* Lista de compras */}
       {data.listaCompras.length > 0 && (

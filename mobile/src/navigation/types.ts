@@ -33,6 +33,7 @@ export type InventarioStackParamList = {
   RecetaEditor: { productoId: number; nombre: string };
   Requerimientos: undefined;
   Ventas: undefined;
+  Productos: undefined;
 };
 
 export type ProveedorTabParamList = {

@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { Clock, ShoppingBag, Store, Handshake, Gift, MessageCircle, ChevronDown, ChevronUp } from 'lucide-react-native';
+import { Clock, ShoppingBag, Store, Handshake, Gift, MessageCircle, ChevronDown, ChevronUp, Ban } from 'lucide-react-native';
 import Card from '../../components/Card';
 import EmptyState from '../../components/EmptyState';
 import EstadoChip, { Estado } from '../../components/EstadoChip';
@@ -79,14 +79,37 @@ export default function MisPedidosScreen() {
       contentContainerStyle={styles.list}
       data={pedidos}
       keyExtractor={(p) => String(p.id)}
-      renderItem={({ item }) => <PedidoCard pedido={item} />}
+      renderItem={({ item }) => <PedidoCard pedido={item} onCancelado={cargar} />}
     />
   );
 }
 
-function PedidoCard({ pedido: p }: { pedido: Pedido }) {
+function PedidoCard({ pedido: p, onCancelado }: { pedido: Pedido; onCancelado: () => void }) {
   const navigation = useNavigation<any>();
   const [abierto, setAbierto] = useState(false);
+  const [cancelando, setCancelando] = useState(false);
+
+  function cancelar() {
+    Alert.alert('Cancelar pedido', '¿Cancelar este pedido? No se puede deshacer.', [
+      { text: 'No', style: 'cancel' },
+      {
+        text: 'Sí, cancelar',
+        style: 'destructive',
+        onPress: async () => {
+          setCancelando(true);
+          try {
+            await api(`/pedidos/${p.id}/cancelar`, { method: 'PATCH' });
+            onCancelado();
+          } catch (e: any) {
+            Alert.alert('Error', e.message);
+          } finally {
+            setCancelando(false);
+          }
+        },
+      },
+    ]);
+  }
+
   const productos = p.items.filter((i) => !i.esBono);
   const bonos = p.items.filter((i) => i.esBono);
   const nProductos = productos.reduce((s, i) => s + i.cantidad, 0);
@@ -206,6 +229,13 @@ function PedidoCard({ pedido: p }: { pedido: Pedido }) {
             <MessageCircle size={13} color={colors.primaryDark} />
             <Text style={styles.chatText}>Chatear con el proveedor</Text>
           </Pressable>
+
+          {p.estado === 'RECIBIDO' && (
+            <Pressable onPress={cancelar} disabled={cancelando} style={styles.cancelBtn}>
+              <Ban size={14} color={colors.danger} />
+              <Text style={styles.cancelText}>{cancelando ? 'Cancelando…' : 'Cancelar pedido'}</Text>
+            </Pressable>
+          )}
         </View>
       )}
     </Card>
@@ -255,4 +285,15 @@ const styles = StyleSheet.create({
   totalValor: { fontWeight: '800', color: colors.primaryDark },
   chatLink: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   chatText: { color: colors.primaryDark, fontWeight: '700', fontSize: 12 },
+  cancelBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#fca5a5',
+    borderRadius: radii.md,
+    paddingVertical: spacing(2),
+  },
+  cancelText: { color: colors.danger, fontWeight: '700', fontSize: 13 },
 });

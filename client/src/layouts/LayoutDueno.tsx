@@ -15,6 +15,7 @@ import {
   MessageCircle,
   Repeat,
   BarChart3,
+  Croissant,
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import { useAuth } from '../store/auth';
@@ -22,6 +23,7 @@ import { useAuth } from '../store/auth';
 const links = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/admin/pedidos', icon: ClipboardList, label: 'Pedidos' },
+  { to: '/admin/productos', icon: Croissant, label: 'Productos' },
   { to: '/admin/negociaciones', icon: Handshake, label: 'Negociaciones' },
   { to: '/admin/afiliados', icon: UserPlus, label: 'Afiliados' },
   { to: '/admin/clientes', icon: Users, label: 'Clientes' },

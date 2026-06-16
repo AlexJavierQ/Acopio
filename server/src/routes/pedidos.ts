@@ -108,7 +108,27 @@ router.post('/', async (req: AuthedRequest, res) => {
     },
     include: incluirCompleto,
   });
-  res.json(pedido);
+
+  // HU15: generar la nota de venta automáticamente al crear el pedido.
+  const numeroNota = `NV-${String((await prisma.notaVenta.count()) + 1).padStart(6, '0')}`;
+  await prisma.notaVenta.create({ data: { pedidoId: pedido.id, numero: numeroNota, total: pedido.total } });
+
+  const completo = await prisma.pedido.findUnique({ where: { id: pedido.id }, include: incluirCompleto });
+  res.json(completo);
+});
+
+// HU11: el cliente cancela su pedido mientras siga RECIBIDO (aún sin producción).
+router.patch('/:id/cancelar', async (req: AuthedRequest, res) => {
+  if (req.user!.rol !== 'CLIENTE') return res.status(403).json({ error: 'Solo el cliente cancela su pedido' });
+  const id = Number(req.params.id);
+  const pedido = await prisma.pedido.findUnique({ where: { id } });
+  if (!pedido) return res.status(404).json({ error: 'No encontrado' });
+  if (pedido.clienteId !== req.user!.id) return res.status(403).json({ error: 'No es tu pedido' });
+  if (pedido.estado !== 'RECIBIDO') {
+    return res.status(400).json({ error: 'Ya no puedes cancelar: el pedido entró en producción' });
+  }
+  const out = await prisma.pedido.update({ where: { id }, data: { estado: 'CANCELADO' } });
+  res.json(out);
 });
 
 // Cambiar estado (solo proveedor del pedido)

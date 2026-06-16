@@ -155,4 +155,56 @@ router.get('/requerimientos', async (req: AuthedRequest, res) => {
   });
 });
 
+/**
+ * POST /produccion/confirmar — HU22
+ * Toma los pedidos nuevos (RECIBIDO), descuenta los insumos según las recetas
+ * y pasa esos pedidos a EN_PRODUCCION (para no descontar dos veces).
+ */
+router.post('/confirmar', async (req: AuthedRequest, res) => {
+  const proveedorId = req.user!.id;
+
+  const pedidos = await prisma.pedido.findMany({
+    where: { proveedorId, estado: 'RECIBIDO' },
+    include: { items: true },
+  });
+  if (pedidos.length === 0) {
+    return res.status(400).json({ error: 'No hay pedidos nuevos por confirmar' });
+  }
+
+  // Unidades por producto
+  const porProducto = new Map<number, number>();
+  for (const p of pedidos) {
+    for (const it of p.items) porProducto.set(it.productoId, (porProducto.get(it.productoId) || 0) + it.cantidad);
+  }
+
+  // Insumos a descontar según recetas
+  const recetas = await prisma.recetaItem.findMany({
+    where: { productoId: { in: Array.from(porProducto.keys()) } },
+  });
+  const deduccion = new Map<number, number>();
+  for (const r of recetas) {
+    const u = porProducto.get(r.productoId) || 0;
+    deduccion.set(r.insumoId, (deduccion.get(r.insumoId) || 0) + r.cantidad * u);
+  }
+
+  const insumos = await prisma.insumo.findMany({ where: { id: { in: Array.from(deduccion.keys()) } } });
+  const updatesInsumos = insumos.map((ins) => {
+    const d = deduccion.get(ins.id) || 0;
+    const nuevo = Math.max(0, Number((ins.stockActual - d).toFixed(3)));
+    return prisma.insumo.update({ where: { id: ins.id }, data: { stockActual: nuevo } });
+  });
+
+  const pedidoIds = pedidos.map((p) => p.id);
+  await prisma.$transaction([
+    ...updatesInsumos,
+    prisma.pedido.updateMany({ where: { id: { in: pedidoIds } }, data: { estado: 'EN_PRODUCCION' } }),
+  ]);
+
+  res.json({
+    ok: true,
+    pedidosConfirmados: pedidoIds.length,
+    insumosDescontados: deduccion.size,
+  });
+});
+
 export default router;

@@ -12,6 +12,7 @@ import {
   Boxes,
   X,
   Save,
+  PlusCircle,
 } from 'lucide-react';
 import { api, formatoUSD } from '../../lib/api';
 
@@ -165,7 +166,24 @@ function InsumoModal({
     costoUnitario: String(insumo?.costoUnitario ?? ''),
   });
   const [guardando, setGuardando] = useState(false);
+  const [compraCant, setCompraCant] = useState('');
+  const [comprando, setComprando] = useState(false);
   const unidades = ['kg', 'g', 'lt', 'ml', 'unidades'];
+
+  async function registrarCompra() {
+    const cantidad = Number(compraCant);
+    if (!(cantidad > 0)) return alert('Ingresa una cantidad mayor a 0');
+    setComprando(true);
+    try {
+      await api(`/insumos/${insumo!.id}/compra`, { method: 'POST', body: JSON.stringify({ cantidad }) });
+      setCompraCant('');
+      onGuardado();
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setComprando(false);
+    }
+  }
 
   async function guardar() {
     if (!form.nombre.trim()) return alert('El nombre es obligatorio');
@@ -268,6 +286,24 @@ function InsumoModal({
             <Save size={16} /> {guardando ? 'Guardando…' : 'Guardar'}
           </button>
         </div>
+        {esEdicion && (
+          <div className="rounded-xl border border-amasa-100 bg-amasa-50/60 p-3 space-y-2">
+            <p className="text-sm font-semibold text-amasa-800">Registrar compra (suma al stock)</p>
+            <div className="flex gap-2">
+              <input
+                className="input"
+                type="number"
+                step="0.01"
+                placeholder={`Cantidad en ${form.unidad}`}
+                value={compraCant}
+                onChange={(e) => setCompraCant(e.target.value)}
+              />
+              <button onClick={registrarCompra} disabled={comprando} className="btn-secondary whitespace-nowrap">
+                <PlusCircle size={16} /> {comprando ? '…' : 'Sumar'}
+              </button>
+            </div>
+          </div>
+        )}
         {esEdicion && (
           <button onClick={eliminar} className="w-full flex items-center justify-center gap-2 text-red-600 text-sm font-semibold py-2 hover:bg-red-50 rounded-lg">
             <Trash2 size={15} /> Eliminar
@@ -449,12 +485,32 @@ interface Requerimientos {
 function TabRequerimientos() {
   const [data, setData] = useState<Requerimientos | null>(null);
   const [loading, setLoading] = useState(true);
+  const [confirmando, setConfirmando] = useState(false);
 
-  useEffect(() => {
+  function cargar() {
+    setLoading(true);
     api<Requerimientos>('/produccion/requerimientos')
       .then(setData)
       .finally(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    cargar();
   }, []);
+
+  async function confirmarProduccion() {
+    if (!confirm('Esto descuenta del inventario los insumos de los pedidos nuevos y los pasa a "En producción". ¿Continuar?')) return;
+    setConfirmando(true);
+    try {
+      const r = await api<{ pedidosConfirmados: number; insumosDescontados: number }>('/produccion/confirmar', { method: 'POST' });
+      alert(`✅ ${r.pedidosConfirmados} pedido(s) en producción · ${r.insumosDescontados} insumo(s) descontados.`);
+      cargar();
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setConfirmando(false);
+    }
+  }
 
   if (loading) return <p className="text-amasa-600">Cargando…</p>;
   if (!data || data.cantidadPedidos === 0) {
@@ -502,6 +558,11 @@ function TabRequerimientos() {
           </div>
         </div>
       </div>
+
+      {/* Confirmar producción (HU22) */}
+      <button onClick={confirmarProduccion} disabled={confirmando} className="btn-primary w-full justify-center">
+        <Factory size={18} /> {confirmando ? 'Descontando…' : 'Confirmar producción y descontar insumos'}
+      </button>
 
       {/* Lista de compras */}
       {data.listaCompras.length > 0 && (

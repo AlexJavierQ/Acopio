@@ -23,6 +23,8 @@ import {
   ChevronRight,
   Trash2,
   BarChart3,
+  PlusCircle,
+  Croissant,
 } from 'lucide-react-native';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
@@ -131,6 +133,18 @@ export default function InventarioScreen() {
               </Card>
             </Pressable>
 
+            {/* Acceso a productos */}
+            <Pressable onPress={() => navigation.navigate('Productos')}>
+              <Card style={styles.linkRow}>
+                <Croissant size={20} color={colors.primaryDark} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.linkTitulo}>Productos</Text>
+                  <Text style={styles.bannerSub}>Tu catálogo: crea y edita lo que vendes</Text>
+                </View>
+                <ChevronRight size={20} color={colors.textMuted} />
+              </Card>
+            </Pressable>
+
             {/* Acceso a ventas y ganancias */}
             <Pressable onPress={() => navigation.navigate('Ventas')}>
               <Card style={styles.linkRow}>
@@ -225,6 +239,26 @@ function InsumoModal({
   const [stockMinimo, setStockMinimo] = useState(String(insumo?.stockMinimo ?? ''));
   const [costoUnitario, setCostoUnitario] = useState(String(insumo?.costoUnitario ?? ''));
   const [guardando, setGuardando] = useState(false);
+  const [compraCant, setCompraCant] = useState('');
+  const [comprando, setComprando] = useState(false);
+
+  async function registrarCompra() {
+    const cantidad = Number(compraCant);
+    if (!(cantidad > 0)) {
+      Alert.alert('Cantidad inválida', 'Ingresa una cantidad mayor a 0.');
+      return;
+    }
+    setComprando(true);
+    try {
+      await api(`/insumos/${insumo!.id}/compra`, { method: 'POST', body: JSON.stringify({ cantidad }) });
+      setCompraCant('');
+      onGuardado();
+    } catch (e: any) {
+      Alert.alert('Error', e.message);
+    } finally {
+      setComprando(false);
+    }
+  }
 
   async function guardar() {
     if (!nombre.trim() || !unidad.trim()) {
@@ -325,6 +359,29 @@ function InsumoModal({
             </View>
 
             {esEdicion && (
+              <View style={styles.compraBox}>
+                <Text style={styles.compraTitulo}>Registrar compra (suma al stock)</Text>
+                <View style={{ flexDirection: 'row', gap: spacing(2) }}>
+                  <TextInput
+                    value={compraCant}
+                    onChangeText={setCompraCant}
+                    keyboardType="numeric"
+                    placeholder={`Cantidad en ${unidad}`}
+                    placeholderTextColor={colors.textSubtle}
+                    style={[styles.input, { flex: 1 }]}
+                  />
+                  <Button
+                    title={comprando ? '…' : 'Sumar'}
+                    variant="secondary"
+                    onPress={registrarCompra}
+                    loading={comprando}
+                    icon={<PlusCircle size={16} color={colors.text} />}
+                  />
+                </View>
+              </View>
+            )}
+
+            {esEdicion && (
               <Pressable onPress={eliminar} style={styles.eliminar}>
                 <Trash2 size={15} color={colors.danger} />
                 <Text style={styles.eliminarText}>Eliminar insumo</Text>
@@ -366,4 +423,6 @@ const styles = StyleSheet.create({
   unidadText: { fontSize: 13, fontWeight: '700', color: colors.text },
   eliminar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: spacing(2) },
   eliminarText: { color: colors.danger, fontWeight: '700' },
+  compraBox: { backgroundColor: colors.primarySoft, borderRadius: radii.md, padding: spacing(3), gap: spacing(2) },
+  compraTitulo: { fontWeight: '700', color: colors.text, fontSize: 13 },
 });

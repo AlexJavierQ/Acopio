@@ -26,6 +26,7 @@ import Ofertas from './pages/dueno/Ofertas';
 import Afiliados from './pages/dueno/Afiliados';
 import Negociaciones from './pages/dueno/Negociaciones';
 import Reportes from './pages/dueno/Reportes';
+import Productos from './pages/dueno/Productos';
 
 import Chat from './pages/comun/Chat';
 
@@ -116,6 +117,7 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="pedidos" element={<Pedidos />} />
         <Route path="pedidos/:id/nota" element={<NotaVentaPage />} />
+        <Route path="productos" element={<Productos />} />
         <Route path="produccion" element={<Produccion />} />
         <Route path="inventario" element={<Inventario />} />
         <Route path="clientes" element={<Clientes />} />
