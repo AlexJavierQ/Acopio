@@ -27,12 +27,9 @@ export default function LayoutCliente() {
   const esProveedor = usuario?.rol === 'PROVEEDOR';
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-amasa-50 via-crema to-amasa-100 relative overflow-hidden">
-      <div className="blob bg-amasa-200" style={{ width: 380, height: 380, top: -120, left: -100, opacity: 0.35 }} />
-      <div className="blob bg-orange-200" style={{ width: 320, height: 320, bottom: 80, right: -80, opacity: 0.3 }} />
-
+    <div className="min-h-screen flex flex-col bg-crema relative">
       {/* Header */}
-      <header className="glass-strong border-b border-white/40 sticky top-0 z-10">
+      <header className="bg-white border-b border-amasa-100 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Logo size={28} />
           <div className="flex items-center gap-2">
@@ -65,7 +62,7 @@ export default function LayoutCliente() {
       </main>
 
       {/* Bottom nav */}
-      <nav className="glass-strong border-t border-white/40 fixed bottom-0 inset-x-0 z-20">
+      <nav className="bg-white border-t border-amasa-100 fixed bottom-0 inset-x-0 z-20">
         <div className={`max-w-5xl mx-auto grid ${esProveedor ? 'grid-cols-6' : 'grid-cols-5'}`}>
           <NavLink to="/proveedores" className={linkClass}>
             <Store size={20} />
