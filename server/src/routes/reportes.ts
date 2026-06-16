@@ -86,6 +86,8 @@ router.get('/', async (req: AuthedRequest, res) => {
     .sort((a, b) => a.fecha.localeCompare(b.fecha));
 
   const sinReceta = productoIds.filter((id) => !costoProducto.has(id)).length;
+  // Costeo incompleto si hay productos sin receta o insumos de receta sin costo definido.
+  const insumosSinCosto = recetas.some((r) => !(r.insumo.costoUnitario > 0));
 
   res.json({
     desde: desde.toISOString(),
@@ -99,7 +101,7 @@ router.get('/', async (req: AuthedRequest, res) => {
     ticketPromedio: pedidos.length ? Number((ventas / pedidos.length).toFixed(2)) : 0,
     serie,
     historial,
-    costeoIncompleto: sinReceta > 0,
+    costeoIncompleto: sinReceta > 0 || insumosSinCosto,
   });
 });
 
