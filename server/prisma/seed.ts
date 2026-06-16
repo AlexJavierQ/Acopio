@@ -112,30 +112,30 @@ async function main() {
     ],
   });
 
-  // ====== INSUMOS DE MARÍA ======
+  // ====== INSUMOS DE MARÍA (con costo por unidad para el costeo de ganancias) ======
   const harina = await prisma.insumo.create({
-    data: { proveedorId: maria.id, nombre: 'Harina de trigo', unidad: 'kg', stockActual: 25, stockMinimo: 10 },
+    data: { proveedorId: maria.id, nombre: 'Harina de trigo', unidad: 'kg', stockActual: 25, stockMinimo: 10, costoUnitario: 0.90 },
   });
   const azucar = await prisma.insumo.create({
-    data: { proveedorId: maria.id, nombre: 'Azúcar', unidad: 'kg', stockActual: 12, stockMinimo: 5 },
+    data: { proveedorId: maria.id, nombre: 'Azúcar', unidad: 'kg', stockActual: 12, stockMinimo: 5, costoUnitario: 1.10 },
   });
   const huevos = await prisma.insumo.create({
-    data: { proveedorId: maria.id, nombre: 'Huevos', unidad: 'unidades', stockActual: 60, stockMinimo: 30 },
+    data: { proveedorId: maria.id, nombre: 'Huevos', unidad: 'unidades', stockActual: 60, stockMinimo: 30, costoUnitario: 0.15 },
   });
   const manteca = await prisma.insumo.create({
-    data: { proveedorId: maria.id, nombre: 'Manteca', unidad: 'kg', stockActual: 4, stockMinimo: 5 },
+    data: { proveedorId: maria.id, nombre: 'Manteca', unidad: 'kg', stockActual: 0.5, stockMinimo: 5, costoUnitario: 2.80 },
   });
   const levadura = await prisma.insumo.create({
-    data: { proveedorId: maria.id, nombre: 'Levadura', unidad: 'kg', stockActual: 1.2, stockMinimo: 0.5 },
+    data: { proveedorId: maria.id, nombre: 'Levadura', unidad: 'kg', stockActual: 1.2, stockMinimo: 0.5, costoUnitario: 5.00 },
   });
   const leche = await prisma.insumo.create({
-    data: { proveedorId: maria.id, nombre: 'Leche', unidad: 'lt', stockActual: 8, stockMinimo: 4 },
+    data: { proveedorId: maria.id, nombre: 'Leche', unidad: 'lt', stockActual: 8, stockMinimo: 4, costoUnitario: 0.85 },
   });
   const queso = await prisma.insumo.create({
-    data: { proveedorId: maria.id, nombre: 'Queso fresco', unidad: 'kg', stockActual: 3, stockMinimo: 2 },
+    data: { proveedorId: maria.id, nombre: 'Queso fresco', unidad: 'kg', stockActual: 0.4, stockMinimo: 2, costoUnitario: 5.50 },
   });
   const chocolate = await prisma.insumo.create({
-    data: { proveedorId: maria.id, nombre: 'Chocolate', unidad: 'kg', stockActual: 2, stockMinimo: 1 },
+    data: { proveedorId: maria.id, nombre: 'Chocolate', unidad: 'kg', stockActual: 2, stockMinimo: 1, costoUnitario: 9.00 },
   });
 
   // ====== PRODUCTOS DE MARÍA ======
@@ -292,6 +292,25 @@ async function main() {
   await prisma.negociacionBono.create({
     data: { negociacionId: negBono.id, productoId: pan.id, cantidad: 2 },
   });
+
+  // ====== HISTORIAL DE VENTAS (días previos, para el reporte de Ventas y ganancias) ======
+  const planHistorial = [
+    { dia: 2, cliente: lucia, items: [{ p: pan, c: 40 }, { p: empanada, c: 12 }] },
+    { dia: 2, cliente: juan, items: [{ p: croissant, c: 10 }] },
+    { dia: 4, cliente: juan, items: [{ p: humita, c: 15 }, { p: galleta, c: 30 }] },
+    { dia: 5, cliente: lucia, items: [{ p: torta, c: 6 }, { p: enrollado, c: 10 }] },
+    { dia: 6, cliente: juan, items: [{ p: pan, c: 50 }] },
+    { dia: 7, cliente: lucia, items: [{ p: empanada, c: 20 }, { p: croissant, c: 8 }] },
+  ];
+  for (const h of planHistorial) {
+    const f = new Date(hoy);
+    f.setDate(f.getDate() - h.dia);
+    await mkPedido(
+      h.cliente.id, '08:00', EstadoPedido.ENTREGADO,
+      h.items.map((i) => ({ productoId: i.p.id, cantidad: i.c, precioUnitario: i.p.precio })),
+      f,
+    );
+  }
 
   // Nota de venta para el LISTO
   await prisma.notaVenta.create({
