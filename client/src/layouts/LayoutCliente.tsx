@@ -1,11 +1,11 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { ShoppingCart, ClipboardList, LogOut, Store } from 'lucide-react';
+import { ShoppingCart, ClipboardList, LogOut, Store, MessageCircle, UserCheck, Repeat } from 'lucide-react';
 import Logo from '../components/Logo';
 import { useAuth } from '../store/auth';
 import { useCarrito } from '../store/carrito';
 
 export default function LayoutCliente() {
-  const { usuario, logout } = useAuth();
+  const { usuario, setModo, logout } = useAuth();
   const cantidad = useCarrito((s) => s.cantidadTotal());
   const navigate = useNavigate();
 
@@ -14,19 +14,39 @@ export default function LayoutCliente() {
     navigate('/login');
   }
 
+  function volverAModoProveedor() {
+    setModo('PROVEEDOR');
+    navigate('/admin');
+  }
+
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-xs font-semibold transition ${
+    `flex flex-col items-center gap-0.5 px-2 py-2 rounded-xl text-[11px] font-semibold transition ${
       isActive ? 'text-amasa-600' : 'text-amasa-700 hover:text-amasa-600'
     }`;
 
+  const esProveedor = usuario?.rol === 'PROVEEDOR';
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-amasa-50 via-crema to-amasa-100 relative overflow-hidden">
+      <div className="blob bg-amasa-200" style={{ width: 380, height: 380, top: -120, left: -100, opacity: 0.35 }} />
+      <div className="blob bg-orange-200" style={{ width: 320, height: 320, bottom: 80, right: -80, opacity: 0.3 }} />
+
       {/* Header */}
-      <header className="bg-white border-b border-amasa-100 sticky top-0 z-10">
+      <header className="glass-strong border-b border-white/40 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Logo size={28} />
-          <div className="flex items-center gap-3">
-            <span className="hidden sm:block text-sm text-amasa-700">
+          <div className="flex items-center gap-2">
+            {esProveedor && (
+              <button
+                onClick={volverAModoProveedor}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amasa-100 hover:bg-amasa-200 text-amasa-800 text-xs font-semibold transition"
+                title="Volver a tu panel de proveedor"
+              >
+                <Repeat size={14} />
+                Mi negocio
+              </button>
+            )}
+            <span className="hidden sm:block text-sm text-amasa-700 px-2">
               Hola, <strong>{usuario?.nombre.split(' ')[0]}</strong>
             </span>
             <button
@@ -40,34 +60,67 @@ export default function LayoutCliente() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6 pb-24">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6 pb-28 relative">
         <Outlet />
       </main>
 
-      {/* Bottom nav móvil */}
-      <nav className="bg-white border-t border-amasa-100 fixed bottom-0 inset-x-0">
-        <div className="max-w-5xl mx-auto grid grid-cols-3">
-          <NavLink to="/catalogo" className={linkClass}>
-            <Store size={22} />
-            Catálogo
+      {/* Bottom nav */}
+      <nav className="glass-strong border-t border-white/40 fixed bottom-0 inset-x-0 z-20">
+        <div className={`max-w-5xl mx-auto grid ${esProveedor ? 'grid-cols-6' : 'grid-cols-5'}`}>
+          <NavLink to="/proveedores" className={linkClass}>
+            <Store size={20} />
+            Proveedores
           </NavLink>
-          <NavLink to="/pedido" className={linkClass}>
-            <div className="relative">
-              <ShoppingCart size={22} />
-              {cantidad > 0 && (
-                <span className="absolute -top-2 -right-3 bg-amasa-500 text-white text-[10px] rounded-full w-5 h-5 grid place-items-center font-bold">
-                  {cantidad}
-                </span>
-              )}
-            </div>
-            Mi pedido
+          <NavLink to="/mis-afiliaciones" className={linkClass}>
+            <UserCheck size={20} />
+            Afiliados
           </NavLink>
           <NavLink to="/mis-pedidos" className={linkClass}>
-            <ClipboardList size={22} />
-            Mis pedidos
+            <ClipboardList size={20} />
+            Pedidos
           </NavLink>
+          <NavLink to="/chat" className={linkClass}>
+            <MessageCircle size={20} />
+            Chat
+          </NavLink>
+          {/* Carrito (vínculo al detalle del proveedor activo) */}
+          <CarritoLink linkClass={linkClass} cantidad={cantidad} />
+          {esProveedor && (
+            <button
+              onClick={volverAModoProveedor}
+              className={`flex flex-col items-center gap-0.5 px-2 py-2 rounded-xl text-[11px] font-semibold text-amasa-700 hover:text-amasa-600 transition`}
+              title="Volver a mi negocio"
+            >
+              <Repeat size={20} />
+              Mi negocio
+            </button>
+          )}
         </div>
       </nav>
     </div>
+  );
+}
+
+function CarritoLink({
+  linkClass,
+  cantidad,
+}: {
+  linkClass: ({ isActive }: { isActive: boolean }) => string;
+  cantidad: number;
+}) {
+  const proveedorId = useCarrito((s) => s.proveedorId);
+  const to = proveedorId ? `/proveedores/${proveedorId}/pedido` : '/proveedores';
+  return (
+    <NavLink to={to} className={linkClass}>
+      <div className="relative">
+        <ShoppingCart size={20} />
+        {cantidad > 0 && (
+          <span className="absolute -top-2 -right-3 bg-amasa-500 text-white text-[10px] rounded-full w-5 h-5 grid place-items-center font-bold">
+            {cantidad}
+          </span>
+        )}
+      </div>
+      Carrito
+    </NavLink>
   );
 }

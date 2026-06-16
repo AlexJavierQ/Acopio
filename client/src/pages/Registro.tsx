@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, User, Phone, Lock, MapPin } from 'lucide-react';
+import { ArrowRight, User, Phone, Lock, MapPin, Store, FileText, Image as ImageIcon } from 'lucide-react';
 import Logo from '../components/Logo';
 import { api } from '../lib/api';
 import { useAuth } from '../store/auth';
@@ -11,7 +11,10 @@ export default function Registro() {
     telefono: '',
     password: '',
     direccion: '',
-    rol: 'CLIENTE' as 'CLIENTE' | 'DUENO',
+    rol: 'CLIENTE' as 'CLIENTE' | 'PROVEEDOR',
+    nombreNegocio: '',
+    descripcion: '',
+    fotoUrl: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,7 +31,7 @@ export default function Registro() {
         body: JSON.stringify(form),
       });
       setAuth(r.token, r.usuario);
-      navigate(r.usuario.rol === 'DUENO' ? '/admin' : '/catalogo');
+      navigate(r.usuario.rol === 'PROVEEDOR' ? '/admin' : '/proveedores');
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -43,13 +46,13 @@ export default function Registro() {
           <Logo />
         </div>
         <h2 className="text-3xl font-bold mb-2 text-center">Crear cuenta</h2>
-        <p className="text-amasa-700 mb-6 text-center">Únete a Amasa en segundos.</p>
+        <p className="text-amasa-700 mb-6 text-center">Únete a Acopio en segundos.</p>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <label className="label">Soy</label>
             <div className="grid grid-cols-2 gap-2">
-              {(['CLIENTE', 'DUENO'] as const).map((r) => (
+              {(['CLIENTE', 'PROVEEDOR'] as const).map((r) => (
                 <button
                   type="button"
                   key={r}
@@ -60,7 +63,7 @@ export default function Registro() {
                       : 'border-amasa-100 bg-white text-amasa-700 hover:border-amasa-300'
                   }`}
                 >
-                  {r === 'CLIENTE' ? '🛒 Cliente' : '👩‍🍳 Dueña/o'}
+                  {r === 'CLIENTE' ? '🛒 Mayorista' : '� Proveedor'}
                 </button>
               ))}
             </div>
@@ -110,6 +113,49 @@ export default function Registro() {
               />
             </div>
           </div>
+
+          {form.rol === 'PROVEEDOR' && (
+            <>
+              <div>
+                <label className="label">Nombre del negocio</label>
+                <div className="relative">
+                  <Store className="absolute left-4 top-1/2 -translate-y-1/2 text-amasa-400" size={20} />
+                  <input
+                    className="input pl-12"
+                    placeholder="Ej. Distribuidora La Cosecha"
+                    value={form.nombreNegocio}
+                    onChange={(e) => setForm({ ...form, nombreNegocio: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="label">Descripción breve</label>
+                <div className="relative">
+                  <FileText className="absolute left-4 top-3 text-amasa-400" size={20} />
+                  <textarea
+                    className="input pl-12 pt-2.5"
+                    rows={2}
+                    placeholder="¿Qué vendes? ¿A quién?"
+                    value={form.descripcion}
+                    onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="label">Foto / logo URL (opcional)</label>
+                <div className="relative">
+                  <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-amasa-400" size={20} />
+                  <input
+                    className="input pl-12"
+                    placeholder="https://..."
+                    value={form.fotoUrl}
+                    onChange={(e) => setForm({ ...form, fotoUrl: e.target.value })}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
           <div>
             <label className="label">Dirección (opcional)</label>

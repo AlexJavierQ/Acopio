@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Receipt, Clock } from 'lucide-react';
+import { Receipt, Clock, Handshake, Gift, MessageCircle } from 'lucide-react';
 import { api, formatoUSD } from '../../lib/api';
 import EstadoChip, { ESTADOS, Estado, labelEstado } from '../../components/EstadoChip';
 
@@ -81,8 +81,30 @@ export default function Pedidos() {
               </div>
             </div>
 
+            {p.negociacion && (
+              <div className={`mb-3 rounded-2xl p-3 text-sm border ${
+                p.negociacion.estado === 'SOLICITADA' ? 'bg-amber-50 border-amber-200 text-amber-900'
+                : p.negociacion.estado === 'ACEPTADA' ? 'bg-green-50 border-green-200 text-green-900'
+                : 'bg-red-50 border-red-200 text-red-900'
+              }`}>
+                <p className="font-bold flex items-center gap-1"><Handshake size={14} />
+                  {p.negociacion.estado === 'SOLICITADA' && 'Negociación pendiente'}
+                  {p.negociacion.estado === 'ACEPTADA' && 'Negociación aceptada'}
+                  {p.negociacion.estado === 'RECHAZADA' && 'Negociación rechazada'}
+                </p>
+                {p.negociacion.mensajeCliente && (
+                  <p className="italic text-xs mt-1">"{p.negociacion.mensajeCliente}"</p>
+                )}
+                {p.negociacion.estado === 'SOLICITADA' && (
+                  <Link to="/admin/negociaciones" className="text-xs font-semibold underline mt-1 inline-block">
+                    Ir a responder →
+                  </Link>
+                )}
+              </div>
+            )}
+
             <div className="bg-amasa-50 rounded-2xl p-4 divide-y divide-amasa-100">
-              {p.items.map((it: any) => (
+              {p.items.filter((it: any) => !it.esBono).map((it: any) => (
                 <div key={it.id} className="py-2 flex justify-between text-sm">
                   <span className="font-semibold">
                     {it.cantidad}× {it.producto.nombre}
@@ -90,11 +112,33 @@ export default function Pedidos() {
                   <span>{formatoUSD(it.cantidad * it.precioUnitario)}</span>
                 </div>
               ))}
-              <div className="pt-2 flex justify-between font-extrabold">
-                <span>Total</span>
-                <span className="text-amasa-600">{formatoUSD(p.total)}</span>
+              {p.items.some((it: any) => it.esBono) && (
+                <div className="py-2 text-xs text-green-800">
+                  <p className="font-bold flex items-center gap-1 mb-1"><Gift size={12} /> Bonos</p>
+                  {p.items.filter((it: any) => it.esBono).map((it: any) => (
+                    <div key={it.id}>+ {it.cantidad}× {it.producto.nombre}</div>
+                  ))}
+                </div>
+              )}
+              <div className="pt-2 space-y-1">
+                <div className="flex justify-between text-sm text-amasa-700">
+                  <span>Subtotal</span><span>{formatoUSD(p.subtotal ?? p.total)}</span>
+                </div>
+                {p.descuento > 0 && (
+                  <div className="flex justify-between text-sm text-green-700 font-semibold">
+                    <span>Descuento</span><span>- {formatoUSD(p.descuento)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between font-extrabold">
+                  <span>Total</span>
+                  <span className="text-amasa-600">{formatoUSD(p.total)}</span>
+                </div>
               </div>
             </div>
+
+            <Link to={`/chat/${p.cliente.id}`} className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-amasa-700 hover:text-amasa-900">
+              <MessageCircle size={12} /> Chatear con el cliente
+            </Link>
           </div>
         ))}
         {filtrados.length === 0 && (

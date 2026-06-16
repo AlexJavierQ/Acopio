@@ -26,6 +26,7 @@ router.get('/', async (req: AuthedRequest, res) => {
   const productos = await prisma.producto.findMany({
     where: { proveedorId: req.user.id },
     orderBy: { id: 'asc' },
+    include: { _count: { select: { recetas: true } } },
   });
   res.json(productos);
 });
@@ -72,6 +73,53 @@ router.delete('/:id', requireAuth, requireProveedor, async (req: AuthedRequest, 
 
   await prisma.producto.update({ where: { id }, data: { activo: false } });
   res.json({ ok: true });
+});
+
+/**
+ * PUT /productos/:id/receta — reemplaza por completo la receta del producto.
+ * Body: { items: [{ insumoId, cantidad }] }  (cantidad = consumo por 1 unidad producida)
+ * Valida que el producto y todos los insumos pertenezcan al proveedor.
+ */
+router.put('/:id/receta', requireAuth, requireProveedor, async (req: AuthedRequest, res) => {
+  const id = Number(req.params.id);
+  const producto = await prisma.producto.findUnique({ where: { id } });
+  if (!producto) return res.status(404).json({ error: 'No encontrado' });
+  if (producto.proveedorId !== req.user!.id) return res.status(403).json({ error: 'No es tuyo' });
+
+  const rawItems = Array.isArray(req.body?.items) ? req.body.items : [];
+  // Normalizar: un solo registro por insumo, cantidad > 0
+  const porInsumo = new Map<number, number>();
+  for (const it of rawItems) {
+    const insumoId = Number(it?.insumoId);
+    const cantidad = Number(it?.cantidad);
+    if (!insumoId || !(cantidad > 0)) continue;
+    porInsumo.set(insumoId, cantidad);
+  }
+  const items = Array.from(porInsumo.entries()).map(([insumoId, cantidad]) => ({ insumoId, cantidad }));
+
+  // Validar que los insumos sean del proveedor
+  if (items.length) {
+    const insumos = await prisma.insumo.findMany({
+      where: { id: { in: items.map((i) => i.insumoId) }, proveedorId: req.user!.id },
+      select: { id: true },
+    });
+    if (insumos.length !== items.length) {
+      return res.status(400).json({ error: 'Algún insumo no existe o no es tuyo' });
+    }
+  }
+
+  await prisma.$transaction([
+    prisma.recetaItem.deleteMany({ where: { productoId: id } }),
+    ...items.map((i) =>
+      prisma.recetaItem.create({ data: { productoId: id, insumoId: i.insumoId, cantidad: i.cantidad } })
+    ),
+  ]);
+
+  const out = await prisma.producto.findUnique({
+    where: { id },
+    include: { recetas: { include: { insumo: true } } },
+  });
+  res.json(out);
 });
 
 export default router;

@@ -23,7 +23,7 @@ export default function Login() {
         body: JSON.stringify({ telefono, password }),
       });
       setAuth(r.token, r.usuario);
-      navigate(r.usuario.rol === 'DUENO' ? '/admin' : '/catalogo');
+      navigate(r.usuario.rol === 'PROVEEDOR' ? '/admin' : '/proveedores');
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -38,11 +38,11 @@ export default function Login() {
         <Logo size={36} />
         <div>
           <h1 className="text-5xl font-extrabold leading-tight mb-4">
-            Pan calientito,<br />pedidos sin llamadas.
+            Mayoristas y proveedores,<br />conectados sin llamadas.
           </h1>
           <p className="text-amasa-100 text-lg max-w-md">
-            Amasa es el CRM hecho en Loja para panaderías y pastelerías que
-            quieren producir lo justo, vender más y dormir tranquilas.
+            Acopio es la plataforma B2B donde tus clientes mayoristas piden,
+            negocian descuentos y reciben sus bonos — todo en un solo lugar.
           </p>
         </div>
         <div className="flex gap-2 text-amasa-100 text-sm">
@@ -109,8 +109,9 @@ export default function Login() {
 
           <div className="mt-8 p-4 rounded-2xl bg-amasa-50 border border-amasa-100 text-sm text-amasa-900">
             <p className="font-semibold mb-1">Cuentas de prueba:</p>
-            <p>👩‍🍳 Dueña: <code>0999000001</code> / <code>amasa123</code></p>
-            <p>🛒 Cliente: <code>0999000002</code> / <code>cliente123</code></p>
+            <p>� Proveedor A: <code>0999000001</code> / <code>acopio123</code></p>
+            <p>🏭 Proveedor B (El Granero): <code>0999000010</code> / <code>acopio123</code></p>
+            <p>🛒 Cliente (Tienda San Juan): <code>0999000002</code> / <code>cliente123</code></p>
           </div>
 
           <Link

@@ -9,3 +9,5 @@ server/prisma/dev.db
 server/prisma/dev.db-journal
 client/dist
 .vercel
+*.tsbuildinfo
+.expo

@@ -10,6 +10,10 @@ import {
   Menu,
   X,
   Megaphone,
+  UserPlus,
+  Handshake,
+  MessageCircle,
+  Repeat,
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import { useAuth } from '../store/auth';
@@ -17,20 +21,28 @@ import { useAuth } from '../store/auth';
 const links = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/admin/pedidos', icon: ClipboardList, label: 'Pedidos' },
+  { to: '/admin/negociaciones', icon: Handshake, label: 'Negociaciones' },
+  { to: '/admin/afiliados', icon: UserPlus, label: 'Afiliados' },
+  { to: '/admin/clientes', icon: Users, label: 'Clientes' },
   { to: '/admin/produccion', icon: Factory, label: 'Producción' },
   { to: '/admin/inventario', icon: Package, label: 'Inventario' },
-  { to: '/admin/clientes', icon: Users, label: 'Clientes' },
   { to: '/admin/ofertas', icon: Megaphone, label: 'Ofertas y Marketing' },
+  { to: '/chat', icon: MessageCircle, label: 'Chat' },
 ];
 
 export default function LayoutDueno() {
-  const { usuario, logout } = useAuth();
+  const { usuario, setModo, logout } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   function salir() {
     logout();
     navigate('/login');
+  }
+
+  function cambiarAModoCliente() {
+    setModo('CLIENTE');
+    navigate('/proveedores');
   }
 
   return (
@@ -73,11 +85,21 @@ export default function LayoutDueno() {
           ))}
         </nav>
 
-        <div className="absolute bottom-0 inset-x-0 p-4 border-t border-white/50 bg-white/40 backdrop-blur-xl">
+        <div className="absolute bottom-0 inset-x-0 p-4 border-t border-white/50 bg-white/40 backdrop-blur-xl space-y-3">
+          <button
+            onClick={cambiarAModoCliente}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-white/70 hover:bg-white border border-amasa-200 text-amasa-800 text-sm font-semibold transition active:scale-[0.98]"
+            title="Actuar como cliente para hacerle pedidos a otros proveedores"
+          >
+            <Repeat size={16} />
+            Cambiar a modo cliente
+          </button>
           <div className="flex items-center justify-between">
             <div className="text-sm min-w-0">
-              <p className="font-semibold text-amasa-900 truncate">{usuario?.nombre}</p>
-              <p className="text-amasa-600 text-xs">Dueño/a</p>
+              <p className="font-semibold text-amasa-900 truncate">
+                {usuario?.nombreNegocio || usuario?.nombre}
+              </p>
+              <p className="text-amasa-600 text-xs">Proveedor/a · {usuario?.nombre.split(' ')[0]}</p>
             </div>
             <button
               onClick={salir}

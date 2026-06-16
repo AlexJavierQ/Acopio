@@ -63,12 +63,14 @@ router.get('/:id', async (req: AuthedRequest, res) => {
 router.post('/', async (req: AuthedRequest, res) => {
   if (req.user!.rol !== 'CLIENTE') return res.status(403).json({ error: 'Solo clientes crean pedidos' });
 
-  const { proveedorId, horaEntrega, items, mensajeNegociacion } = req.body as {
+  const { proveedorId, horaEntrega, items, mensajeNegociacion, solicitarNegociacion } = req.body as {
     proveedorId: number;
     horaEntrega: string;
     items: { productoId: number; cantidad: number }[];
-    mensajeNegociacion?: string; // si viene, abre una negociación SOLICITADA
+    mensajeNegociacion?: string;
+    solicitarNegociacion?: boolean;
   };
+  const abrirNegociacion = !!solicitarNegociacion || !!(mensajeNegociacion && mensajeNegociacion.trim());
   if (!proveedorId || !Array.isArray(items) || items.length === 0) {
     return res.status(400).json({ error: 'proveedorId y al menos un producto son requeridos' });
   }
@@ -100,8 +102,8 @@ router.post('/', async (req: AuthedRequest, res) => {
       clienteId: req.user!.id, proveedorId, horaEntrega,
       subtotal, descuento: 0, total: subtotal,
       items: { create: itemsConPrecio },
-      ...(mensajeNegociacion ? {
-        negociacion: { create: { estado: 'SOLICITADA', mensajeCliente: mensajeNegociacion } },
+      ...(abrirNegociacion ? {
+        negociacion: { create: { estado: 'SOLICITADA', mensajeCliente: mensajeNegociacion || null } },
       } : {}),
     },
     include: incluirCompleto,

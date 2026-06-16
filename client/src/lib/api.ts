@@ -1,9 +1,10 @@
-// Cliente HTTP simple para la API de Amasa
-const API_BASE = '/api';
+// Cliente HTTP simple para la API de Acopio.
+// En dev usa proxy de Vite (`/api`). En prod usa VITE_API_URL (ej. https://acopio-api.vercel.app/api).
+const API_BASE = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
 
 function getToken() {
   try {
-    const raw = localStorage.getItem('amasa-auth');
+    const raw = localStorage.getItem('acopio-auth');
     if (!raw) return null;
     return JSON.parse(raw)?.state?.token || null;
   } catch {

@@ -43,7 +43,12 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ error: err.message || 'Error interno' });
 });
 
-const PORT = Number(process.env.PORT || 4000);
-app.listen(PORT, () => {
-  console.log(`📦 Acopio API escuchando en http://localhost:${PORT}`);
-});
+// En Vercel/serverless NO levantamos listener; exportamos el app.
+if (!process.env.VERCEL) {
+  const PORT = Number(process.env.PORT || 4000);
+  app.listen(PORT, () => {
+    console.log(`📦 Acopio API escuchando en http://localhost:${PORT}`);
+  });
+}
+
+export default app;

@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Acopio",
+    "slug": "acopio",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "acopio",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#fdf6ec"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.acopio.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#fdf6ec"
+      },
+      "package": "com.acopio.app"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "apiUrl": "https://acopio-api.vercel.app/api"
+    }
+  }
+}
