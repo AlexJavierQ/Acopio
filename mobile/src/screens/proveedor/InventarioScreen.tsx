@@ -22,6 +22,7 @@ import {
   CheckCircle2,
   ChevronRight,
   Trash2,
+  BarChart3,
 } from 'lucide-react-native';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
@@ -36,6 +37,7 @@ interface Insumo {
   unidad: string;
   stockActual: number;
   stockMinimo: number;
+  costoUnitario: number;
 }
 
 type Nav = NativeStackNavigationProp<InventarioStackParamList, 'Insumos'>;
@@ -129,6 +131,18 @@ export default function InventarioScreen() {
               </Card>
             </Pressable>
 
+            {/* Acceso a ventas y ganancias */}
+            <Pressable onPress={() => navigation.navigate('Ventas')}>
+              <Card style={styles.linkRow}>
+                <BarChart3 size={20} color={colors.primaryDark} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.linkTitulo}>Ventas y ganancias</Text>
+                  <Text style={styles.bannerSub}>Ingresos, costos y ganancia del periodo</Text>
+                </View>
+                <ChevronRight size={20} color={colors.textMuted} />
+              </Card>
+            </Pressable>
+
             {/* Encabezado materias primas */}
             <View style={styles.seccionRow}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -209,6 +223,7 @@ function InsumoModal({
   const [unidad, setUnidad] = useState(insumo?.unidad ?? 'kg');
   const [stockActual, setStockActual] = useState(String(insumo?.stockActual ?? ''));
   const [stockMinimo, setStockMinimo] = useState(String(insumo?.stockMinimo ?? ''));
+  const [costoUnitario, setCostoUnitario] = useState(String(insumo?.costoUnitario ?? ''));
   const [guardando, setGuardando] = useState(false);
 
   async function guardar() {
@@ -223,6 +238,7 @@ function InsumoModal({
         unidad: unidad.trim(),
         stockActual: Number(stockActual) || 0,
         stockMinimo: Number(stockMinimo) || 0,
+        costoUnitario: Number(costoUnitario) || 0,
       });
       if (esEdicion) await api(`/insumos/${insumo!.id}`, { method: 'PUT', body });
       else await api('/insumos', { method: 'POST', body });
@@ -289,6 +305,18 @@ function InsumoModal({
                 <Text style={styles.label}>Stock mínimo</Text>
                 <TextInput value={stockMinimo} onChangeText={setStockMinimo} keyboardType="numeric" placeholder="0" placeholderTextColor={colors.textSubtle} style={styles.input} />
               </View>
+            </View>
+
+            <View style={{ gap: spacing(1) }}>
+              <Text style={styles.label}>Costo por {unidad} ($)</Text>
+              <TextInput
+                value={costoUnitario}
+                onChangeText={setCostoUnitario}
+                keyboardType="numeric"
+                placeholder="Para calcular la ganancia"
+                placeholderTextColor={colors.textSubtle}
+                style={styles.input}
+              />
             </View>
 
             <View style={{ flexDirection: 'row', gap: spacing(2), marginTop: spacing(1) }}>

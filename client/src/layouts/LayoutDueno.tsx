@@ -14,6 +14,7 @@ import {
   Handshake,
   MessageCircle,
   Repeat,
+  BarChart3,
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import { useAuth } from '../store/auth';
@@ -24,6 +25,7 @@ const links = [
   { to: '/admin/negociaciones', icon: Handshake, label: 'Negociaciones' },
   { to: '/admin/afiliados', icon: UserPlus, label: 'Afiliados' },
   { to: '/admin/clientes', icon: Users, label: 'Clientes' },
+  { to: '/admin/reportes', icon: BarChart3, label: 'Ventas y ganancias' },
   { to: '/admin/produccion', icon: Factory, label: 'Producción' },
   { to: '/admin/inventario', icon: Package, label: 'Inventario' },
   { to: '/admin/ofertas', icon: Megaphone, label: 'Ofertas y Marketing' },

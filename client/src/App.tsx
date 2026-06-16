@@ -25,6 +25,7 @@ import ClienteDetalle from './pages/dueno/ClienteDetalle';
 import Ofertas from './pages/dueno/Ofertas';
 import Afiliados from './pages/dueno/Afiliados';
 import Negociaciones from './pages/dueno/Negociaciones';
+import Reportes from './pages/dueno/Reportes';
 
 import Chat from './pages/comun/Chat';
 
@@ -121,6 +122,7 @@ export default function App() {
         <Route path="clientes/:id" element={<ClienteDetalle />} />
         <Route path="afiliados" element={<Afiliados />} />
         <Route path="negociaciones" element={<Negociaciones />} />
+        <Route path="reportes" element={<Reportes />} />
         <Route path="ofertas" element={<Ofertas />} />
       </Route>
 

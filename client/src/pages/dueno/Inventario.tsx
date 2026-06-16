@@ -70,6 +70,7 @@ interface Insumo {
   unidad: string;
   stockActual: number;
   stockMinimo: number;
+  costoUnitario: number;
 }
 
 function TabInsumos() {
@@ -161,6 +162,7 @@ function InsumoModal({
     unidad: insumo?.unidad ?? 'kg',
     stockActual: String(insumo?.stockActual ?? ''),
     stockMinimo: String(insumo?.stockMinimo ?? ''),
+    costoUnitario: String(insumo?.costoUnitario ?? ''),
   });
   const [guardando, setGuardando] = useState(false);
   const unidades = ['kg', 'g', 'lt', 'ml', 'unidades'];
@@ -174,6 +176,7 @@ function InsumoModal({
         unidad: form.unidad,
         stockActual: Number(form.stockActual) || 0,
         stockMinimo: Number(form.stockMinimo) || 0,
+        costoUnitario: Number(form.costoUnitario) || 0,
       });
       if (esEdicion) await api(`/insumos/${insumo!.id}`, { method: 'PUT', body });
       else await api('/insumos', { method: 'POST', body });
@@ -245,6 +248,17 @@ function InsumoModal({
               onChange={(e) => setForm({ ...form, stockMinimo: e.target.value })}
             />
           </div>
+        </div>
+        <div>
+          <label className="label">Costo por {form.unidad} ($)</label>
+          <input
+            className="input"
+            type="number"
+            step="0.01"
+            placeholder="Para calcular la ganancia"
+            value={form.costoUnitario}
+            onChange={(e) => setForm({ ...form, costoUnitario: e.target.value })}
+          />
         </div>
         <div className="flex gap-2 pt-2">
           <button onClick={onClose} className="btn-secondary flex-1">

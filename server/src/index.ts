@@ -14,6 +14,7 @@ import afiliacionesRoutes from './routes/afiliaciones';
 import negociacionesRoutes from './routes/negociaciones';
 import mensajesRoutes from './routes/mensajes';
 import proveedoresRoutes from './routes/proveedores';
+import reportesRoutes from './routes/reportes';
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use('/api/afiliaciones', afiliacionesRoutes);
 app.use('/api/negociaciones', negociacionesRoutes);
 app.use('/api/mensajes', mensajesRoutes);
 app.use('/api/proveedores', proveedoresRoutes);
+app.use('/api/reportes', reportesRoutes);
 
 // Manejo de errores
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

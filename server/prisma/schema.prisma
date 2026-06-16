@@ -83,12 +83,13 @@ model Producto {
 }
 
 model Insumo {
-  id          Int      @id @default(autoincrement())
-  proveedorId Int
-  nombre      String
-  unidad      String   // kg, unidades, lt, g
-  stockActual Float    @default(0)
-  stockMinimo Float    @default(0)
+  id           Int      @id @default(autoincrement())
+  proveedorId  Int
+  nombre       String
+  unidad       String   // kg, unidades, lt, g
+  stockActual  Float    @default(0)
+  stockMinimo  Float    @default(0)
+  costoUnitario Float   @default(0) // costo por unidad (ej. $/kg) para costeo de producción
 
   proveedor   Usuario      @relation("ProveedorInsumos", fields: [proveedorId], references: [id], onDelete: Cascade)
   recetas     RecetaItem[]

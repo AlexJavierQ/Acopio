@@ -23,9 +23,16 @@ router.get('/', async (req: AuthedRequest, res) => {
 });
 
 router.post('/', async (req: AuthedRequest, res) => {
-  const { nombre, unidad, stockActual, stockMinimo } = req.body;
+  const { nombre, unidad, stockActual, stockMinimo, costoUnitario } = req.body;
   const i = await prisma.insumo.create({
-    data: { nombre, unidad, stockActual, stockMinimo, proveedorId: req.user!.id },
+    data: {
+      nombre,
+      unidad,
+      stockActual,
+      stockMinimo,
+      costoUnitario: costoUnitario ?? 0,
+      proveedorId: req.user!.id,
+    },
   });
   res.json(i);
 });
@@ -35,10 +42,10 @@ router.put('/:id', async (req: AuthedRequest, res) => {
   const check = await asegurarInsumoPropio(id, req.user!.id);
   if (!('ok' in check)) return res.status(check.error).json({ error: check.msg });
 
-  const { nombre, unidad, stockActual, stockMinimo } = req.body;
+  const { nombre, unidad, stockActual, stockMinimo, costoUnitario } = req.body;
   const i = await prisma.insumo.update({
     where: { id },
-    data: { nombre, unidad, stockActual, stockMinimo },
+    data: { nombre, unidad, stockActual, stockMinimo, costoUnitario },
   });
   res.json(i);
 });
